@@ -1,39 +1,30 @@
-# https://lawlessguy.wordpress.com/2016/02/10/play-mp3-files-with-python-windows/
-# https://social.msdn.microsoft.com/Forums/vstudio/en-US/1abd0100-a2ec-4e62-b66f-d6d574a4a258/play-pause-restart-amp-stop-an-audio-file?forum=vbgeneral
-
-class PlaysoundException(Exception):
-    pass
-
-class _PlatformPlayer():
-
-    def play(self, sound, loop=False):
-        '''
-        Inspired by (but not copied from) Michael Gundlach <gundlach@gmail.com>'s mp3play:
-        https://github.com/michaelgundlach/mp3play
+from abstractaudioplayer import AbstractAudioPlayer
+from ctypes import windll
 
 
-        '''
-        from ctypes import c_buffer, windll
-        from random import random
-        from time import sleep
-        from sys import getfilesystemencoding
+class AudioPlayer(AbstractAudioPlayer):
+    def __init__(self, filename):
+        super().__init__(filename)
+        self._alias = "A{}".format(id(self))
+        self._mciSendString('open "{}" alias {}'.format(filename, self._alias))
 
-        def winCommand(*command):
-            buf = c_buffer(255)
-            command = ' '.join(command).encode(getfilesystemencoding())
-            errorCode = int(windll.winmm.mciSendStringA(command, buf, 254, 0))
-            if errorCode:
-                errorBuffer = c_buffer(255)
-                windll.winmm.mciGetErrorStringA(errorCode, errorBuffer, 254)
-                exceptionMessage = ('\n    Error ' + str(errorCode) + ' for command:'
-                                    '\n        ' + command.decode() +
-                                    '\n    ' + errorBuffer.value.decode())
-                raise PlaysoundException(exceptionMessage)
-            return buf.value
+    def __del__(self):
+        self._do_stop()
 
-        alias = 'playsound_' + str(random())
-        winCommand('open "' + sound + '" alias', alias)
-        winCommand('set', alias, 'time format milliseconds')
-        durationInMS = winCommand('status', alias, 'length')
-        winCommand('play', alias, 'from 0 to', durationInMS.decode())
+    def _mciSendString(self, command):
+        return windll.winmm.mciSendStringW(command, 0, 0, 0)
 
+    def _do_play(self, loop=False, block=False):
+        sloop = 'repeat' if loop else ''
+        swait = 'wait' if block else ''
+        self._mciSendString('play {} {} {}'.format(
+            self._alias, sloop, swait))
+
+    def _do_pause(self):
+        self._mciSendString('pause {}'.format(self._alias))
+
+    def _do_resume(self):
+        self._mciSendString('resume {}'.format(self._alias))
+
+    def _do_stop(self):
+        self._mciSendString('close {}'.format(self._alias))

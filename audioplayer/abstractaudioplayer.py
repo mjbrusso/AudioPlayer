@@ -1,19 +1,16 @@
 from abc import ABC, abstractmethod
 
+
 class AbstractAudioPlayer(ABC):
 
     def __init__(self, filename):
         self._filename = filename
-        self._loop = False
-        self._block = False
 
     @abstractmethod
     def _do_play(self, loop=False, block=False):
         pass
 
     def play(self, loop=False, block=False):
-        self._loop = loop
-        self._block = block
         self._do_play(loop, block)
 
     @abstractmethod
