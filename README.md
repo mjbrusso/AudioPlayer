@@ -4,13 +4,6 @@
 
 
 ## Installation
-<--
-You can use the `pip` to install **audioplayer**:
-
-```
-pip3 install audioplayer
-```
---->
 
 Install the latest release by cloning the repository:
 
