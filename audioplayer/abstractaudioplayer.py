@@ -1,35 +1,52 @@
 from abc import ABC, abstractmethod
+import os
+import sys
 
 
 class AbstractAudioPlayer(ABC):
-
+    @abstractmethod
     def __init__(self, filename):
-        self._filename = filename
+        self._player = None         # Lazy loaded
+        if not '/' in filename:
+            self._filename = os.path.join(os.getcwd(), filename)
+        else:
+            self._filename = os.path.abspath(filename)
+
+    def __del__(self):
+        self.stop()
+        self._player = None
 
     @abstractmethod
-    def _do_play(self, loop=False, block=False):
+    def _load_player(self):
+        pass
+
+    @abstractmethod
+    def _doplay(self, loop=False, block=False):
         pass
 
     def play(self, loop=False, block=False):
-        self._do_play(loop, block)
+        if self._player is None:                     # Lazy loading
+            self._player = self._load_player()
+
+        self._doplay(loop, block)
 
     @abstractmethod
-    def _do_pause(self):
+    def _dopause(self):
         pass
 
     def pause(self):
-        self._do_pause()
+        self._dopause()
 
     @abstractmethod
-    def _do_resume(self):
+    def _doresume(self):
         pass
 
     def resume(self):
-        self._do_resume()
+        self._doresume()
 
     @abstractmethod
-    def _do_stop(self):
+    def _dostop(self):
         pass
 
     def stop(self):
-        self._do_stop()
+        self._dostop()
