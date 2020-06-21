@@ -76,11 +76,11 @@ Stops audio playback.
 
 **audioPlayer** has been tested on the following platforms:
 
-| OS        | Detail               | .mp3  |  .wav | .ogg  |
-| --------- | -------------------- |:-----:|:-----:|:-----:|
-| GNU/Linux | Mint 19 (Cinnamon)   | ✓     | ✓     | ✓     |
-| Windows   | Windows 10 x64       | ✓     | ?     | ?     |
-| MacOS     | Windows 10 x64       | ✓     | ?     | ?     |
+| OS        | Detail               | .mp3  |  .wav | .ogg  | .mid  |
+| --------- | -------------------- |:-----:|:-----:|:-----:|:-----:|
+| GNU/Linux | Mint 19 (Cinnamon)   | ✓     | ✓     | ✓    | ✕    |
+| Windows   | Windows 10 x64       | ✓     | ✓     | ✕    | ✓    |
+| MacOS     | -                    | ?     | ?     | ?     | ?     |
 
 `?`: *Not yet tested*
 

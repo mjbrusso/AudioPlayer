@@ -14,6 +14,11 @@ class AudioPlayerWindows(AbstractAudioPlayer):
         return self._mciSendString('open "{}" alias {}'.format(self._filename, self._alias))
 
     def _doplay(self, loop=False, block=False):
+        """
+        Starts audio playback.
+            - loop:  bool – Sets whether to repeat the track automatically when finished.
+            - block: bool – If true, blocks the thread until playback ends.
+        """
         sloop = 'repeat' if loop else ''
         swait = 'wait' if block else ''
         self._mciSendString('play {} {} {}'.format(
@@ -26,4 +31,4 @@ class AudioPlayerWindows(AbstractAudioPlayer):
         self._mciSendString('resume {}'.format(self._alias))
 
     def _dostop(self):
-        self._mciSendString('close {}'.format(self._alias))
+        self._mciSendString('stop {}'.format(self._alias))
