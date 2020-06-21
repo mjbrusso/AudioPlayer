@@ -1,8 +1,8 @@
-from abstractaudioplayer import AbstractAudioPlayer
+from .abstractaudioplayer import AbstractAudioPlayer
 from ctypes import windll
 
 
-class AudioPlayer(AbstractAudioPlayer):
+class AudioPlayerWindows(AbstractAudioPlayer):
     def __init__(self, filename):
         super().__init__(filename)
         self._alias = "A{}".format(id(self))

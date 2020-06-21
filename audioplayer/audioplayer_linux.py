@@ -1,4 +1,7 @@
-from abstractaudioplayer import AbstractAudioPlayer
+# Inspired by https://stackoverflow.com/a/29704692
+#            https://gstreamer.freedesktop.org/documentation/additional/design/states.html?gi-language=python
+
+from .abstractaudioplayer import AbstractAudioPlayer
 from urllib.request import pathname2url
 
 import gi
@@ -6,28 +9,35 @@ gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 Gst.init(None)
 
-
-class AudioPlayer(AbstractAudioPlayer):
+class AudioPlayerLinux(AbstractAudioPlayer):
     def __init__(self, filename):
         super().__init__(filename)
-        self._uri = 'file://{}'.format(pathname2url(self._filename))
+        self._uri = self.fullfilename if 'file:' in self.fullfilename else 'file://{}'.format(
+            pathname2url(self.fullfilename))
+        self._signal = None
 
     def _load_player(self):
         return Gst.ElementFactory.make('playbin', "playbin")
 
     def _doplay(self, loop=False, block=False):
         """
-         Inspired by https://stackoverflow.com/a/29704692
+        Starts audio playback.
+            - loop:  bool – Sets whether to repeat the track automatically when finished.
+            - block: bool – If true, blocks the thread until playback ends.
         """
+        if not self._signal is None:
+            self._player.disconnect(self._signal)
+            self._signal = None
         if loop:
-            self._player.connect("about-to-finish",
-                                 lambda msg: self._player.set_property('uri', self._uri))
+            self._signal = self._player.connect("about-to-finish",
+                                 lambda msg: self._player.set_property('uri', self._uri)) # Repeat
 
+        self._player.set_state(Gst.State.READY)
         self._player.set_property('uri', self._uri)
         self._player.set_state(Gst.State.PLAYING)
         if block:
-            self._player.get_bus().timed_pop_filtered(
-                Gst.CLOCK_TIME_NONE, Gst.MessageType.ERROR | Gst.MessageType.EOS)
+            self._player.get_bus().timed_pop_filtered(   # block until a matching message was posted on the bus
+                Gst.CLOCK_TIME_NONE, Gst.MessageType.ERROR | Gst.MessageType.EOS)  
 
     def _dopause(self):
         self._player.set_state(Gst.State.PAUSED)

@@ -1,7 +1,15 @@
 # AudioPlayer
-**audioplayer** is a cross platform Python 3 module for playing sounds (mp3, wav, ...)
+**audioplayer** is a cross platform Python 3 module for playing sounds (mp3, wav, ...).
+
+I created this package to provide sound functionality to my game library [game2dboard](https://github.com/mjbrusso/game2dboard), but I decided to publish it separately.
+
+Suported systems (see [full list](#Suported-Systems)):
+- GNU/Linux 
+- Windows
+- MacOS
 
 Inspired by (and with a few lines of codes from) the [playsound module](https://github.com/TaylorSMarks/playsound).
+
 
 ## Installation
 
@@ -14,21 +22,20 @@ python3 setup.py install --user
 ```
 
 
-## Requirements
+### Requirements
 
-To do
+In Linux, you need to install PyGObject and others dependencies. Follow the instructions from [PyGObject web site](https://pygobject.readthedocs.io/en/latest/getting_started.html).
 
-## Usage
+### Usage
 
 The API is documented [bellow](#API) and within the docstrings. 
 
-After install, you you can really test with this code:
+After install, you can use this code to test (replace "path/to/somemusic.mp3"):
 
 ```python
 from audioplayer import AudioPlayer
 
-p = AudioPlayer("music.mp3")
-p.play(block=True)
+AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ```
 
@@ -40,6 +47,14 @@ p.play(block=True)
 Creates the player.
   - `filename` : *str* – The file name, with extension  (.mp3, .wav, ...)
 
+### Properties
+
+- `filename` : *str*  (readonly)<br> 
+The file name as provided in the constructor.
+
+
+- `fullfilename` : *str*  (readonly)<br> 
+The file name with full path.
 
 ### Methods
 
@@ -57,6 +72,18 @@ Resumes audio playback.
 - `stop()`<br>
 Stops audio playback.
 
+## Suported Systems
+
+**audioPlayer** has been tested on the following platforms:
+
+- GNU/Linux
+  - Mint 19 (Cinnamon)
+- Windows
+  - Windows 10 x64
+- MacOS
+  - Not tested yet
+
+Let me know if using on another system or distro!
 
 ## How to Contribute
 

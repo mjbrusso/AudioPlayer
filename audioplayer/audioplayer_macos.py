@@ -1,11 +1,11 @@
-from abstractaudioplayer import AbstractAudioPlayer
+from .abstractaudioplayer import AbstractAudioPlayer
 from AppKit import NSSound
 #from Foundation import NSURL
 from time import sleep
 
 
 
-class AudioPlayer(AbstractAudioPlayer):
+class AudioPlayerMacOS(AbstractAudioPlayer):
     def __init__(self, filename):
         super().__init__(filename)        
         # self._url = NSURL.URLWithString_('file://{}'.format(self._filename))
