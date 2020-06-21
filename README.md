@@ -1,5 +1,5 @@
 # AudioPlayer
-**audioplayer** is a cross platform Python 3 module for playing sounds (mp3, wav, ...).
+**audioplayer** is a cross platform Python 3 package for playing sounds (mp3, wav, ...).
 
 I created this package to provide sound functionality to my game library [game2dboard](https://github.com/mjbrusso/game2dboard), but I decided to publish it separately.
 
@@ -76,14 +76,15 @@ Stops audio playback.
 
 **audioPlayer** has been tested on the following platforms:
 
-- GNU/Linux
-  - Mint 19 (Cinnamon)
-- Windows
-  - Windows 10 x64
-- MacOS
-  - Not tested yet
+| OS        | Detail               | .mp3  |  .wav | .ogg  |
+| --------- | -------------------- |:-----:|:-----:|:-----:|
+| GNU/Linux | Mint 19 (Cinnamon)   | ✓     | ✓     | ✓     |
+| Windows   | Windows 10 x64       | ✓     | ?     | ?     |
+| MacOS     | Windows 10 x64       | ✓     | ?     | ?     |
 
-Let me know if using on another system or distro!
+`?`: *Not yet tested*
+
+Let me know if using on another system/distro/version!
 
 ## How to Contribute
 
