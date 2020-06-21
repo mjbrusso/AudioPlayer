@@ -44,14 +44,14 @@ Creates the player.
 ### Methods
 
 - `play(loop=False, block=False)`<br>
-Sarts audio playback.
+Starts audio playback.
     - `loop` (*bool*) – Sets whether to repeat the track automatically when finished.
     - `block` (*bool*) – If true, blocks the thread until playback ends.
 
 - `pause()`<br>
 Pauses audio playback.
 
-- `pause()`<br>
+- `resume()`<br>
 Resumes audio playback.
   
 - `stop()`<br>
@@ -76,4 +76,4 @@ If you can improve anything in this project, feel free to add a [pull request](h
 
 ## License
 
-audioplayer is under [MIT license](https://github.com/mjbrusso/audioplayer/blob/master/LICENSE). It can be reused within proprietary software provided that all copies of the licensed software include a copy of the MIT License terms and the copyright notice.
+**audioplayer** is under [MIT license](https://github.com/mjbrusso/audioplayer/blob/master/LICENSE). It can be reused within proprietary software provided that all copies of the licensed software include a copy of the MIT License terms and the copyright notice.
