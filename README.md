@@ -1,7 +1,7 @@
 # AudioPlayer
 **audioplayer** is a cross platform Python 3 module for playing sounds (mp3, wav, ...)
 
-
+Inspired by (and with a few lines of codes from) the [playsound module](https://github.com/TaylorSMarks/playsound).
 
 ## Installation
 
@@ -16,7 +16,7 @@ python3 setup.py install --user
 
 ## Requirements
 
-
+To do
 
 ## Usage
 
