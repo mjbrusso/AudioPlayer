@@ -4,15 +4,17 @@ from AppKit import NSSound
 from time import sleep
 
 
-
 class AudioPlayerMacOS(AbstractAudioPlayer):
     def __init__(self, filename):
-        super().__init__(filename)        
+        super().__init__(filename)
         # self._url = NSURL.URLWithString_('file://{}'.format(self._filename))
-        # or ? self._url = NSURL.fileURLWithPath_(sound)    # this seems to work        
+        # or ? self._url = NSURL.fileURLWithPath_(sound)    # this seems to work
 
     def _load_player(self):
         return NSSound.alloc().initWithContentsOfFile_byReference_(self._filename, True)
+
+    def _do_setvolume(self, value):
+        self._player.volume = value / 100.0              # 0.0..1.0
 
     def _doplay(self, loop=False, block=False):
         self._player.loops = loop

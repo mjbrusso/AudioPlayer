@@ -11,7 +11,12 @@ class AudioPlayerWindows(AbstractAudioPlayer):
         return windll.winmm.mciSendStringW(command, 0, 0, 0)
 
     def _load_player(self):
-        return self._mciSendString('open "{}" alias {}'.format(self._filename, self._alias))
+        return self._mciSendString('open "{}" type mpegvideo alias {}'.format(self._filename, self._alias))
+
+    def _do_setvolume(self, value):
+        volume = int(value * 10)  # MCI volume: 0...1000
+        self._mciSendString(
+            'setaudio {} volume to {}'.format(self._alias, volume))
 
     def _doplay(self, loop=False, block=False):
         """
@@ -21,7 +26,7 @@ class AudioPlayerWindows(AbstractAudioPlayer):
         """
         sloop = 'repeat' if loop else ''
         swait = 'wait' if block else ''
-        self._mciSendString('play {} {} {}'.format(
+        self._mciSendString('play {} from 0 {} {}'.format(
             self._alias, sloop, swait))
 
     def _dopause(self):
@@ -32,3 +37,6 @@ class AudioPlayerWindows(AbstractAudioPlayer):
 
     def _dostop(self):
         self._mciSendString('stop {}'.format(self._alias))
+
+    def _doclose(self):
+        self._mciSendString('close {}'.format(self._alias))

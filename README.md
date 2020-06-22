@@ -35,6 +35,7 @@ After install, you can use this code to test (replace "path/to/somemusic.mp3"):
 ```python
 from audioplayer import AudioPlayer
 
+# Playback stops when the object is destroyed, so save a reference to the object for non-blocking playback.
 AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ```
@@ -56,6 +57,10 @@ The file name as provided in the constructor.
 - `fullfilename` : *str*  (readonly)<br> 
 The file name with full path.
 
+
+- `volume` : *int* <br> 
+Gets or sets the current volume (in %) of the audio (0 — 100)
+
 ### Methods
 
 - `play(loop=False, block=False)`<br>
@@ -70,7 +75,11 @@ Pauses audio playback.
 Resumes audio playback.
   
 - `stop()`<br>
-Stops audio playback.
+Stops audio playback. Can play again.
+
+- `close()`<br>
+Closes device, releasing resources. Can't play again.
+
 
 ## Suported Systems
 
@@ -79,12 +88,13 @@ Stops audio playback.
 | OS        | Detail               | .mp3  |  .wav | .ogg  | .mid  |
 | --------- | -------------------- |:-----:|:-----:|:-----:|:-----:|
 | GNU/Linux | Mint 19 (Cinnamon)   | ✓     | ✓     | ✓    | ✕    |
+| GNU/Linux | Xubuntu 20.04        | ✓     | ✓     | ✓    | ✓    |
 | Windows   | Windows 10 x64       | ✓     | ✓     | ✕    | ✓    |
 | MacOS     | -                    | ?     | ?     | ?     | ?     |
 
 `?`: *Not yet tested*
 
-Let me know if using on another system/distro/version!
+Let me know if you are using on another system/distro/version!
 
 ## How to Contribute
 

@@ -16,6 +16,7 @@ class AbstractAudioPlayer(ABC):
         """
         self._player = None         # Lazy loaded
         self._filename = filename   # The file name as provided
+        self._volume = 100          # 100%
         if not os.path.sep in filename:
             self._fullfilename = os.path.join(
                 os.getcwd(), filename)  # Full file name (with path)
@@ -24,10 +25,10 @@ class AbstractAudioPlayer(ABC):
 
     def __del__(self):
         """
-        Stops the player when the object object gets destroyed.
+        Stops the player when the object gets destroyed.
         """
-        self.stop()
-        self._player = None
+        if not self._player is None:
+            self.close()
 
     # region Properties
 
@@ -44,6 +45,29 @@ class AbstractAudioPlayer(ABC):
         Full file name with full path.
         """
         return self._fullfilename
+
+    @property
+    def volume(self):
+        """
+
+        Gets or sets the current volume (in %) of the audio (0 — 100))
+
+        :type: int
+        """
+        return self._volume
+
+    @volume.setter
+    def volume(self, value):
+        if 0 <= value <= 100:
+            self._volume = value
+            self._do_setvolume(value)
+
+    @abstractmethod
+    def _do_setvolume(self, value):
+        """
+        Platform dependent code to setting volume.
+        """
+        pass
 
     # endregion Properties
 
@@ -108,8 +132,22 @@ class AbstractAudioPlayer(ABC):
 
     def stop(self):
         """
-        Stops audio playback.
+        Stops audio playback. Can play again.
         """
         self._dostop()
+
+    @abstractmethod
+    def _doclose(self):
+        """
+        Platform dependent code
+        """
+        pass
+
+    def close(self):
+        """
+        Closes device, releasing resources. Can't play again.
+        """
+        self._doclose()
+        self._player = None
 
     # endregion Methods
