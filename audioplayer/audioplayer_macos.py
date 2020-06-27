@@ -1,6 +1,5 @@
 from .abstractaudioplayer import AbstractAudioPlayer
 from AppKit import NSSound
-#from Foundation import NSURL
 from time import sleep
 
 
@@ -29,4 +28,7 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
         self._player.resume()
 
     def _dostop(self):
+        self._player.stop()
+
+    def _doclose(self):
         self._player.stop()

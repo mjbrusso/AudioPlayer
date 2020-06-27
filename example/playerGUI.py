@@ -3,7 +3,6 @@ import tkinter
 from tkinter import filedialog
 import os
 
-dirname = os.path.join(os.path.dirname(__file__), 'img')
 paused = False
 player = None
 
@@ -13,6 +12,7 @@ def load():
     fname = filedialog.askopenfilename()
     if fname:
         player = AudioPlayer(fname)
+        changevolume(0)  # update UI
         namelabel.config(text=os.path.basename(player.fullfilename))
         player.play()
 
@@ -39,18 +39,21 @@ def stop():
         player.stop()
 
 
-def addvolume(inc):
+def changevolume(delta):
     global player, vollabel
     if not player is None:
-        player.volume += inc
+        player.volume += delta
         vollabel.config(text='{}%'.format(player.volume))
 
 
+btnfont = (None, 30)
+lblfont = (None, 8)
+
+# Build UI
 root = tkinter.Tk()
 root.title('Music Player')
 root.attributes('-topmost', True)
-btnfont = (None, 30)
-lblfont = (None, 8)
+root.resizable(False, False)
 
 botframe = tkinter.Frame()
 botframe.pack(fill=tkinter.X, side=tkinter.TOP)
@@ -61,6 +64,7 @@ vollabel = tkinter.Label(botframe, text='100%', anchor=tkinter.E, font=lblfont)
 vollabel.pack(side=tkinter.LEFT, padx=3)
 
 toolbar = tkinter.Frame(root)
+toolbar.pack(side=tkinter.TOP)
 tkinter.Button(toolbar, text='⏏', font=btnfont, width=2,
                command=load).pack(side=tkinter.LEFT)
 tkinter.Button(toolbar, text='⏵', font=btnfont, width=2,
@@ -69,13 +73,12 @@ tkinter.Button(toolbar, text='⏯', font=btnfont, width=2,
                command=tooglepause).pack(side=tkinter.LEFT)
 tkinter.Button(toolbar, text='⏹', font=btnfont, width=2,
                command=stop).pack(side=tkinter.LEFT)
+
 volframe = tkinter.Frame(toolbar)
 volframe.pack(side=tkinter.LEFT)
 tkinter.Button(volframe, text='+', height=1, width=2,
-               command=lambda: addvolume(10)).pack(side=tkinter.TOP)
+               command=lambda: changevolume(10)).pack(side=tkinter.TOP)
 tkinter.Button(volframe, text='-', height=1, width=2,
-               command=lambda: addvolume(-10)).pack(side=tkinter.TOP)
-toolbar.pack(side=tkinter.TOP)
+               command=lambda: changevolume(-10)).pack(side=tkinter.TOP)
 
-root.resizable(False, False)
 root.mainloop()
