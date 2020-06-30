@@ -17,6 +17,12 @@ class AudioPlayerLinux(AbstractAudioPlayer):
             pathname2url(self.fullfilename))
         self._signal = None
 
+    # def _on_error(self, bus, message):
+    #     if message.type == Gst.MessageType.ERROR:
+    #         self._player.set_state(Gst.State.NULL)
+    #         err, info = message.parse_error()
+    #         raise AudioPlayerError('Error {}: {}', format(err, info))
+
     def _load_player(self):
         return Gst.ElementFactory.make('playbin', None)
 
@@ -40,6 +46,7 @@ class AudioPlayerLinux(AbstractAudioPlayer):
         self._player.set_state(Gst.State.READY)
         self._player.set_property('uri', self._uri)
         self._player.set_state(Gst.State.PLAYING)
+
         if block:
             self._player.get_bus().timed_pop_filtered(   # block until a matching message was posted on the bus
                 Gst.CLOCK_TIME_NONE, Gst.MessageType.ERROR | Gst.MessageType.EOS)

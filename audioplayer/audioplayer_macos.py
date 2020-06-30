@@ -18,8 +18,9 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
     def _doplay(self, loop=False, block=False):
         self._player.setLoops_(loop)
         self._player.play()
-        while block and self._player.isPlaying():
-            sleep(0.2)
+        while block:
+            sleep(self._player.duration)
+            block = loop # block && loop = infinite loop!!!!
 
     def _dopause(self):
         self._player.pause()

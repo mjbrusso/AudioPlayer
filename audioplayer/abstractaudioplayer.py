@@ -3,6 +3,11 @@ import os
 import sys
 
 
+class AudioPlayerError(Exception):
+    """Basic exception for errors raised by Player"""
+    pass
+
+
 class AbstractAudioPlayer(ABC):
     """
     Abstract Base Class (ABC) for AudioPlayer,
@@ -22,6 +27,9 @@ class AbstractAudioPlayer(ABC):
                 os.getcwd(), filename)  # Full file name (with path)
         else:
             self._fullfilename = os.path.abspath(filename)
+        if not os.path.exists(self._fullfilename):
+            raise FileNotFoundError(
+                'File does not exist: "{}"'.format(self._fullfilename))
 
     def __del__(self):
         """
@@ -75,9 +83,16 @@ class AbstractAudioPlayer(ABC):
     @abstractmethod
     def _load_player(self):
         """
-        Create and return the actual, platform dependent, player object.
+        Platform dependent code
         """
         pass
+
+    def load_player(self):
+        player = self._load_player()
+        if player is None:
+            raise AudioPlayerError(
+                'Error loading player for file "{}"'.format(self._fullfilename))
+        return player
 
     @abstractmethod
     def _doplay(self, loop=False, block=False):
@@ -93,7 +108,7 @@ class AbstractAudioPlayer(ABC):
             - block: bool – If true, blocks the thread until playback ends.
         """
         if self._player is None:                     # Lazy loading
-            self._player = self._load_player()
+            self._player = self.load_player()
 
         self._do_setvolume(self._volume)
         self._doplay(loop, block)
