@@ -13,10 +13,10 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
         return NSSound.alloc().initWithContentsOfFile_byReference_(self._filename, True)
 
     def _do_setvolume(self, value):
-        self._player.volume = value / 100.0              # 0.0..1.0
+        self._player.setVolume_(value / 100.0)              # 0.0..1.0
 
     def _doplay(self, loop=False, block=False):
-        self._player.loops = loop
+        self._player.setLoops_(loop)
         self._player.play()
         while block and self._player.isPlaying():
             sleep(0.2)
@@ -32,3 +32,4 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
 
     def _doclose(self):
         self._player.stop()
+        self._player.release()

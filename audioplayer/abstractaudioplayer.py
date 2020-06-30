@@ -58,8 +58,8 @@ class AbstractAudioPlayer(ABC):
 
     @volume.setter
     def volume(self, value):
-        if 0 <= value <= 100:
-            self._volume = value
+        self._volume = max(min(value, 100), 0)  # clamp to [0..100]
+        if not self._player is None:
             self._do_setvolume(value)
 
     @abstractmethod
@@ -95,6 +95,7 @@ class AbstractAudioPlayer(ABC):
         if self._player is None:                     # Lazy loading
             self._player = self._load_player()
 
+        self._do_setvolume(self._volume)
         self._doplay(loop, block)
 
     @abstractmethod
@@ -108,7 +109,8 @@ class AbstractAudioPlayer(ABC):
         """
         Pauses audio playback.
         """
-        self._dopause()
+        if not self._player is None:
+            self._dopause()
 
     @abstractmethod
     def _doresume(self):
@@ -121,7 +123,8 @@ class AbstractAudioPlayer(ABC):
         """
         Resumes audio playback.
         """
-        self._doresume()
+        if not self._player is None:
+            self._doresume()
 
     @abstractmethod
     def _dostop(self):
@@ -134,7 +137,8 @@ class AbstractAudioPlayer(ABC):
         """
         Stops audio playback. Can play again.
         """
-        self._dostop()
+        if not self._player is None:
+            self._dostop()
 
     @abstractmethod
     def _doclose(self):
@@ -147,7 +151,8 @@ class AbstractAudioPlayer(ABC):
         """
         Closes device, releasing resources. Can't play again.
         """
-        self._doclose()
-        self._player = None
+        if not self._player is None:
+            self._doclose()
+            self._player = None
 
     # endregion Methods

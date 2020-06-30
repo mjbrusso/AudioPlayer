@@ -54,6 +54,7 @@ root = tkinter.Tk()
 root.title('Music Player')
 root.attributes('-topmost', True)
 root.resizable(False, False)
+root.attributes('-topmost', False)
 
 botframe = tkinter.Frame()
 botframe.pack(fill=tkinter.X, side=tkinter.TOP)
@@ -65,20 +66,20 @@ vollabel.pack(side=tkinter.LEFT, padx=3)
 
 toolbar = tkinter.Frame(root)
 toolbar.pack(side=tkinter.TOP)
-tkinter.Button(toolbar, text='⏏', font=btnfont, width=2,
+tkinter.Button(toolbar, text='⏏️', font=btnfont, width=2,
                command=load).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text='⏵', font=btnfont, width=2,
+tkinter.Button(toolbar, text='▶️', font=btnfont, width=2,
                command=play).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text='⏯', font=btnfont, width=2,
+tkinter.Button(toolbar, text='⏯️', font=btnfont, width=2,
                command=tooglepause).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text='⏹', font=btnfont, width=2,
+tkinter.Button(toolbar, text='⏹️', font=btnfont, width=2,
                command=stop).pack(side=tkinter.LEFT)
 
 volframe = tkinter.Frame(toolbar)
 volframe.pack(side=tkinter.LEFT)
-tkinter.Button(volframe, text='+', height=1, width=2,
+tkinter.Button(volframe, text='➕', height=1, width=2, 
                command=lambda: changevolume(10)).pack(side=tkinter.TOP)
-tkinter.Button(volframe, text='-', height=1, width=2,
+tkinter.Button(volframe, text='➖', height=1, width=2,
                command=lambda: changevolume(-10)).pack(side=tkinter.TOP)
 
 root.mainloop()
