@@ -13,7 +13,7 @@ class AudioPlayerWindows(AbstractAudioPlayer):
     def _load_player(self):
         ret = self._mciSendString('open "{}" type mpegvideo alias {}'.format(self._filename, self._alias))
         if ret > 0:
-            raise AudioPlayerError( 'Error playing "{}"'.format(self.fullfilename))
+            raise AudioPlayerError( 'Failed to play "{}"'.format(self.fullfilename))
         return ret
 
     def _do_setvolume(self, value):

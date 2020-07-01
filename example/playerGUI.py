@@ -6,7 +6,7 @@ from platform import system
 
 paused = False
 player = None
-buttons = '⏏▶⏯⏹'  if system() == 'Windows' else '⏏️▶️⏯️⏹️'
+buttons_glyph = ('⏏','▶', '⏯' ,'⏹')  if system() == 'Windows' else ('⏏️', '▶️', '⏯️', '⏹️')
 
 def load():
     global player, root
@@ -65,26 +65,26 @@ root.attributes('-topmost', False)
 
 botframe = tkinter.Frame()
 botframe.pack(fill=tkinter.X, side=tkinter.TOP)
-namelabel = tkinter.Label(botframe, text='No file open',
+namelabel = tkinter.Label(botframe,
                           anchor=tkinter.W, font=lblfont)
 namelabel.pack(fill=tkinter.X, expand=1, side=tkinter.LEFT, padx=2)
 vollabel = tkinter.Label(botframe, text='100%', anchor=tkinter.E, font=lblfont)
-vollabel.pack(side=tkinter.LEFT, padx=3)
+vollabel.pack(side=tkinter.LEFT, padx=0)
 
 toolbar = tkinter.Frame(root)
 toolbar.pack(side=tkinter.TOP)
-tkinter.Button(toolbar, text=buttons[0], font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons_glyph[0], font=btnfont, width=2,
                command=load).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text=buttons[1], font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons_glyph[1], font=btnfont, width=2,
                command=play).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text=buttons[2], font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons_glyph[2], font=btnfont, width=2,
                command=tooglepause).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text=buttons[3], font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons_glyph[3], font=btnfont, width=2,
                command=stop).pack(side=tkinter.LEFT)
 
 volframe = tkinter.Frame(toolbar)
-volframe.pack(side=tkinter.LEFT)
-tkinter.Button(volframe, text='➕', command=lambda: changevolume(10)).pack(side=tkinter.TOP)
-tkinter.Button(volframe, text='➖', command=lambda: changevolume(-10)).pack(side=tkinter.TOP)
+volframe.pack(side=tkinter.LEFT, expand=1, fill=tkinter.BOTH)
+tkinter.Button(volframe, text='➕', command=lambda: changevolume(10)).pack(side=tkinter.TOP, expand=1, fill=tkinter.BOTH)
+tkinter.Button(volframe, text='➖', command=lambda: changevolume(-10)).pack(side=tkinter.TOP, expand=1, fill=tkinter.BOTH)
 
 root.mainloop()

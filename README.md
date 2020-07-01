@@ -72,53 +72,57 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 ### Creation
 
 - `audioplayer.AudioPlayer(filename)`<br>
-Creates the player.
-  - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
+  Creates the player.
+    - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
+  
+  Raise: `FileNotFoundError()` :  The file does not exist.
 
 ### Properties
 
 - `filename` : *str*  (readonly)<br> 
-The file name as provided in the constructor.
+  The file name as provided in the constructor.
 
 
 - `fullfilename` : *str*  (readonly)<br> 
-The file name with full path.
+  The file name with full path.
 
 
 - `volume` : *int* <br> 
-Gets or sets the current volume (in %) of the audio (0 — 100)
+  Gets or sets the current volume (in %) of the audio (0 — 100)
 
 ### Methods
 
 - `play(loop=False, block=False)`<br>
-Starts audio playback.
+  Starts audio playback.
     - `loop` (*bool*) – Sets whether to repeat the track automatically when finished.
     - `block` (*bool*) – If true, blocks the thread until playback ends.
 
+  Raise: `AudioPlayerError()`: Failed to play.
+
 - `pause()`<br>
-Pauses audio playback.
+  Pauses audio playback.
 
 - `resume()`<br>
-Resumes audio playback.
+  Resumes audio playback.
   
 - `stop()`<br>
-Stops audio playback. Can play again.
+  Stops audio playback. Can play again.
 
 - `close()`<br>
-Closes device, releasing resources. Can't play again.
+  Closes device, releasing resources. Can't play again.
 
 
 ## Suported Systems
 
 **audioPlayer** has been tested on the following platforms:
 
-| OS        | Details            | .mp3  | .wav  | .ogg  | .mid  |
-| --------- | ------------------ | :---: | :---: | :---: | :---: |
-| GNU/Linux | Mint 19 (Cinnamon) |   ✓   |   ✓   |   ✓   |   ✕   |
-| GNU/Linux | Xubuntu 20.04      |   ✓   |   ✓   |   ✓   |   ✓   |
-| GNU/Linux | Raspberry Pi OS    |   ✓   |   ✓   |   ✓   |   ✓   |
-| Windows   | Windows 10 x64     |   ✓   |   ✓   |   ✕   |   ✓   |
-| macOS     | -                  |   ?   |   ?   |   ?   |   ?   |
+| OS        | Details                |  mp3  |  wav  |  ogg  |  mid  |
+| --------- | ---------------------- | :---: | :---: | :---: | :---: |
+| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓   |   ✓   |   ✕   |
+| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓   |   ✓   |   ✓   |
+| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓   |   ✓   |   ✓   |
+| Windows   | Windows 10 x64         |   ✓   |   ✓   |   ✕   |   ✓   |
+| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓   |   ✕   |   ✕   |
 
 `?`: *Not yet tested*
 

@@ -43,7 +43,7 @@ class AudioPlayerLinux(AbstractAudioPlayer):
         status = self._player.get_state(Gst.CLOCK_TIME_NONE)
         if status[0] == Gst.StateChangeReturn.FAILURE:
             raise AudioPlayerError(
-                'Error playing "{}"'.format(self.fullfilename))
+                'Failed to play "{}"'.format(self.fullfilename))
 
         if block:
             self._player.get_bus().timed_pop_filtered(   # block until a matching message was posted on the bus
