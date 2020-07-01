@@ -33,4 +33,3 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
 
     def _doclose(self):
         self._player.stop()
-        self._player.release()

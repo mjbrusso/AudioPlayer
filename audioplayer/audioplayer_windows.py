@@ -1,4 +1,4 @@
-from .abstractaudioplayer import AbstractAudioPlayer
+from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError
 from ctypes import windll
 
 
@@ -11,7 +11,10 @@ class AudioPlayerWindows(AbstractAudioPlayer):
         return windll.winmm.mciSendStringW(command, 0, 0, 0)
 
     def _load_player(self):
-        return self._mciSendString('open "{}" type mpegvideo alias {}'.format(self._filename, self._alias))
+        ret = self._mciSendString('open "{}" type mpegvideo alias {}'.format(self._filename, self._alias))
+        if ret > 0:
+            raise AudioPlayerError( 'Error playing "{}"'.format(self.fullfilename))
+        return ret
 
     def _do_setvolume(self, value):
         volume = int(value * 10)  # MCI volume: 0...1000

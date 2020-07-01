@@ -8,7 +8,6 @@ for fmt in ('mp3', 'ogg', 'wav', 'mid'):
     try:
         p = AudioPlayer(file)
         print('Playing {} file: {}'.format(fmt, soundfile))
-        p.play()
-        input('Press ENTER')
+        p.play(block=True)
     except Exception as e:
-        print('Error: ', e)
+        print(e)

@@ -1,11 +1,12 @@
 from audioplayer import AudioPlayer
 import tkinter
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import os
+from platform import system
 
 paused = False
 player = None
-
+buttons = '⏏▶⏯⏹'  if system() == 'Windows' else '⏏️▶️⏯️⏹️'
 
 def load():
     global player, root
@@ -14,7 +15,10 @@ def load():
         player = AudioPlayer(fname)
         changevolume(0)  # update UI
         namelabel.config(text=os.path.basename(player.fullfilename))
-        player.play()
+        try:
+            player.play()
+        except Exception as e:
+            messagebox.showerror('Error', e)
 
 
 def tooglepause():
@@ -30,7 +34,10 @@ def tooglepause():
 def play():
     global player
     if not player is None:
-        player.play()
+        try:
+            player.play()
+        except Exception as e:
+            messagebox.showerror('Error', e)
 
 
 def stop():
@@ -66,20 +73,18 @@ vollabel.pack(side=tkinter.LEFT, padx=3)
 
 toolbar = tkinter.Frame(root)
 toolbar.pack(side=tkinter.TOP)
-tkinter.Button(toolbar, text='⏏️', font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons[0], font=btnfont, width=2,
                command=load).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text='▶️', font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons[1], font=btnfont, width=2,
                command=play).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text='⏯️', font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons[2], font=btnfont, width=2,
                command=tooglepause).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text='⏹️', font=btnfont, width=2,
+tkinter.Button(toolbar, text=buttons[3], font=btnfont, width=2,
                command=stop).pack(side=tkinter.LEFT)
 
 volframe = tkinter.Frame(toolbar)
 volframe.pack(side=tkinter.LEFT)
-tkinter.Button(volframe, text='➕', height=1, width=2, 
-               command=lambda: changevolume(10)).pack(side=tkinter.TOP)
-tkinter.Button(volframe, text='➖', height=1, width=2,
-               command=lambda: changevolume(-10)).pack(side=tkinter.TOP)
+tkinter.Button(volframe, text='➕', command=lambda: changevolume(10)).pack(side=tkinter.TOP)
+tkinter.Button(volframe, text='➖', command=lambda: changevolume(-10)).pack(side=tkinter.TOP)
 
 root.mainloop()

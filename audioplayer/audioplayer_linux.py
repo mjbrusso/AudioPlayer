@@ -1,7 +1,7 @@
 # Inspired by https://stackoverflow.com/a/29704692
 #            https://gstreamer.freedesktop.org/documentation/additional/design/states.html?gi-language=python
 
-from .abstractaudioplayer import AbstractAudioPlayer
+from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError
 from urllib.request import pathname2url
 
 import gi
@@ -16,12 +16,6 @@ class AudioPlayerLinux(AbstractAudioPlayer):
         self._uri = self.fullfilename if 'file:' in self.fullfilename else 'file://{}'.format(
             pathname2url(self.fullfilename))
         self._signal = None
-
-    # def _on_error(self, bus, message):
-    #     if message.type == Gst.MessageType.ERROR:
-    #         self._player.set_state(Gst.State.NULL)
-    #         err, info = message.parse_error()
-    #         raise AudioPlayerError('Error {}: {}', format(err, info))
 
     def _load_player(self):
         return Gst.ElementFactory.make('playbin', None)
@@ -46,6 +40,10 @@ class AudioPlayerLinux(AbstractAudioPlayer):
         self._player.set_state(Gst.State.READY)
         self._player.set_property('uri', self._uri)
         self._player.set_state(Gst.State.PLAYING)
+        status = self._player.get_state(Gst.CLOCK_TIME_NONE)
+        if status[0] == Gst.StateChangeReturn.FAILURE:
+            raise AudioPlayerError(
+                'Error playing "{}"'.format(self.fullfilename))
 
         if block:
             self._player.get_bus().timed_pop_filtered(   # block until a matching message was posted on the bus
