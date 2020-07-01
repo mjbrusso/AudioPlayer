@@ -26,7 +26,7 @@ __classifiers__ = [
     "Topic :: Multimedia :: Sound/Audio",
     "Topic :: Multimedia :: Sound/Audio :: Players",
     "Topic :: Multimedia :: Sound/Audio :: Players :: MP3",
-    "Intended Audience :: Developers"
+    "Intended Audience :: Developers",
     "Intended Audience :: Education",
     "License :: OSI Approved :: MIT License",
 ]

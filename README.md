@@ -43,9 +43,15 @@ In macOS, you need to install PyObjC bridge.
 pip3 install PyObjC --user
 ```
 
-### Install this audioplayer package
+### Install
 
-Install the latest release by cloning this repository:
+The recommended way to install `audioplayer` is using the Python **pip** installer.
+
+```
+pip3 install audioplayer
+```
+
+You can install the latest release by cloning this repository.
 
 ```bash
 git clone https://github.com/mjbrusso/audioplayer.git 
