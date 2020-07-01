@@ -45,11 +45,18 @@ pip3 install PyObjC --user
 
 ### Install
 
-The recommended way to install `audioplayer` is using the Python **pip** installer.
+The recommended way to install `audioplayer` is using the Python **pip** (or **pip3**) installer.
 
 ```
 pip3 install audioplayer
 ```
+
+If you don't have administrator privileges, install in your home folder.
+
+```
+pip3 install audioplayer --user
+```
+
 
 You can install the latest release by cloning this repository.
 
