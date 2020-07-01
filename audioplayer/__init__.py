@@ -1,6 +1,6 @@
 __name__ = "audioplayer"
 __package__ = "audioplayer"
-__version__ = "0.5"
+__version__ = "0.6"
 
 from platform import system
 
