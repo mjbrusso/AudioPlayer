@@ -1,34 +1,34 @@
 # AudioPlayer
-**audioplayer** is a cross platform Python 3 package for playing sounds (mp3, wav, ...). It provides the key features of an audio player, such as opening a media file, playing (loop/block), pausing, resuming, stopping, and setting the playback volume.
+**audioplayer** é uma package Python 3 multi-plataforma para executar sons em diversos formatos (mp3, wav, ...). Fornece as principais características de um reprodutor de mídia, como abrir um arquivo de áudio, tocar (com loop/bloquante), pausar, despausar, finalizar e definir o volume da reprodução.
 
-I created this package to provide sound functionality to my game library [game2dboard](https://github.com/mjbrusso/game2dboard), but I decided to publish it separately.
+Esta packagefoi criada para prover funcionalidades sonoras à minha biblioteca de games [game2dboard](https://github.com/mjbrusso/game2dboard), mas eu decidi pblicá-la separadamente.
 
-Suported systems (see [full list](#suported-systems)):
+Sistemas suportados (veja [full list](#sistemas-suportados)):
 - GNU/Linux (PC, Raspberry Pi, ...)
 - Windows
 - macOS
 
-Inspired by (and with a few lines of codes from) the [playsound module](https://github.com/TaylorSMarks/playsound).
+Inspirado por (e com algumas linasde código de) [playsound module](https://github.com/TaylorSMarks/playsound).
 
-Read this in another languages.
+Leia esta documentação em outra linguagem
 
 [🇧🇷](README-pt_BR.md) [🇬🇧/🇺🇸](README.md)
 
-## Table of contents
-* [Install](#Install)
+## Sumário
+* [Instalação](#Instalação)
 * [API](#API)
-* [Suported Systems](#Suported-Systems)
+* [Sistemas Suportados](#sistemas-suportados)
 * [What's in the roadmap?](#whats-in-the-roadmap)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
   
 
-## Install
+## Instalação
 
-### Prerequisites
+### Pré-requisitos
 
 #### GNU/Linux
-In Linux, you need to install PyGObject and others dependencies.
+No GNU/Linus, você precisa instalar PyGObject e outras dependências.
 
 Ubuntu/Debian/Raspberry Pi OS:
 ```bash
@@ -49,28 +49,27 @@ sudo yum install -y python-gstreamer1 \
 
 #### macOS
 
-In macOS, you need to install PyObjC bridge.
+No macOS, voê precisa instalar a bridge PyObjC .
 
 ```bash
 pip3 install PyObjC --user
 ```
 
-### Install
+### Instalação
 
-The recommended way to install `audioplayer` is using the Python **pip** (or **pip3**) installer.
+Recomendamos instalar `audioplayer` usando o instalador **pip** (or **pip3**).
 
 ```
 pip3 install audioplayer
 ```
 
-If you don't have administrator privileges, install in your home folder.
+Se você não tem privilégios de administrador, instale-o em sua pasta pessoal.
 
 ```
 pip3 install audioplayer --user
 ```
 
-
-You can install the latest release by cloning this repository.
+Você também pode instalar clonando a versão mais recente deste repositório.
 
 ```bash
 git clone https://github.com/mjbrusso/audioplayer.git 
@@ -78,70 +77,70 @@ cd audioplayer
 python3 setup.py install --user
 ```
 
-### Usage
+### Usando
 
-The API is documented [bellow](#API) and within the docstrings. 
+A API está documentada [abaixo](#API) e nos comentários docstrings. 
 
-After install, you can use this code to test (replace "path/to/somemusic.mp3"):
+Após a instalação, você pode usar este código para testar (substitua "path/to/somemusic.mp3" por um nome real de arquivo):
 
 ```python
 from audioplayer import AudioPlayer
 
-# Playback stops when the object is destroyed (GC'ed), so save a reference to the object for non-blocking playback.
+# A reprodução para quando o objeto é destruído pelo coletor de lixo, então guarde uma referência para reproduçõs não bloqueantes.
 AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ```
 
 ## API
 
-### Creation
+### Criação
 
 - `audioplayer.AudioPlayer(filename)`<br>
-  Creates the player.
-    - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
+  Cria o player.
+    - `filename` : *str* – Nome do arquivo, com extensão  (.mp3, .wav, ...)
   
-  Raise: `FileNotFoundError()` :  The file does not exist.
+  Raise: `FileNotFoundError()` :  O arquivo não existe.
 
-### Properties
+### Propriedades
 
 - `filename` : *str*  (readonly)<br> 
-  The file name as provided in the constructor.
+  O nome do arquivo, tal quel formecido na criação.
 
 
 - `fullfilename` : *str*  (readonly)<br> 
-  The file name with full path.
+  O nome do arquivo, com caminho completo.
 
 
 - `volume` : *int* <br> 
-  Gets or sets the current volume (in %) of the audio (0 — 100)
+  ObtÇem ou define o volume atual do audio (em %): 0 — 100
 
-### Methods
+### Métodos
 
 - `play(loop=False, block=False)`<br>
-  Starts audio playback.
-    - `loop` (*bool*) – Sets whether to repeat the track automatically when finished.
-    - `block` (*bool*) – If true, blocks the thread until playback ends.
+  Inicia a reprodução.
+    - `loop` (*bool*) – Repetir automaticamente a faixa quando concluída?
+    - `block` (*bool*) – Bloquear a thread durante a execução?
 
-  Raise: `AudioPlayerError()`: Failed to play.
+  Raise: `AudioPlayerError()`: Falha ao executar.
 
 - `pause()`<br>
-  Pauses audio playback.
+  Pausa a reprodução.
 
 - `resume()`<br>
-  Resumes audio playback.
+  Retorna da pausa.
   
 - `stop()`<br>
-  Stops audio playback. Can play again.
+  Para a reprodução do áudio. Pode ser executado novamente.
 
 - `close()`<br>
-  Closes device, releasing resources. Can't play again.
+  Fecha o dispositivo de reprodução, liberando recursos. Não poderá ser executado novamente.
 
 
-## Suported Systems
+## Sistemas Suportados
 
-**audioPlayer** has been tested on the following platforms:
+**audioPlayer** foi testado nas seguintes plataformas:
 
-| OS        | Details                |  mp3  |  wav  |  ogg  |  mid  |
+| OS        | Detalhes               |  mp3  |  wav  |  ogg  |  mid  |
 | --------- | ---------------------- | :---: | :---: | :---: | :---: |
 | GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓   |   ✓   |   ✕   |
 | GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓   |   ✓   |   ✓   |
@@ -149,9 +148,9 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 | Windows   | Windows 10 x64         |   ✓   |   ✓   |   ✕   |   ✓   |
 | macOS     | Catalina (Python 3.8)  |   ✓   |   ✓   |   ✕   |   ✕   |
 
-`?`: *Not yet tested*
+`?`: *Ainda não testado*
 
-Let me know if you are using on another system/distro/version!
+Deixe-me saber se você est'usando em outro sistema/distro/versão!
 
 ## What's in the roadmap? 
 - `.seek(position)` : Moves playback to the specified position.
