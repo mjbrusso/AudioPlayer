@@ -10,9 +10,7 @@ Suported systems (see [full list](#suported-systems)):
 
 Inspired by (and with a few lines of codes from) the [playsound module](https://github.com/TaylorSMarks/playsound).
 
-Read this in another languages.
-
-[🇧🇷](README-pt_BR.md) [🇬🇧/🇺🇸](README.md)
+Read this in another languages: [🇧🇷](README-pt_BR.md) [🇬🇧 🇺🇸](README.md)
 
 ## Table of contents
 * [Install](#Install)

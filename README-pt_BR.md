@@ -10,17 +10,15 @@ Sistemas suportados (veja [full list](#sistemas-suportados)):
 
 Inspirado por (e com algumas linasde código de) [playsound module](https://github.com/TaylorSMarks/playsound).
 
-Leia esta documentação em outra linguagem
-
-[🇧🇷](README-pt_BR.md) [🇬🇧/🇺🇸](README.md)
+Leia esta documentação em outra linguagem: [🇧🇷](README-pt_BR.md) [🇬🇧 🇺🇸](README.md)
 
 ## Sumário
 * [Instalação](#Instalação)
 * [API](#API)
 * [Sistemas Suportados](#sistemas-suportados)
-* [What's in the roadmap?](#whats-in-the-roadmap)
-* [How to Contribute](#how-to-contribute)
-* [License](#license)
+* [Planos para o futuro](#planos-para-o-futuro)
+* [Como contribuir](#como-contribuir)
+* [Licença](#licença)
   
 
 ## Instalação
@@ -152,28 +150,29 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 Deixe-me saber se você est'usando em outro sistema/distro/versão!
 
-## What's in the roadmap? 
-- `.seek(position)` : Moves playback to the specified position.
-- `.state` :  Current state (playing, stopped, paused, ...)
-- `.speed = value` : Gets/sets playback speed.
-- Callbacks: when state changed, when position changed by a delta, ...
+## Planos para o futuro 
+- `.seek(position)` : Move a reprodução para a posição indicada.
+- `.state` :  Estado atual (executando, parado, pausado, ...)
+- `.speed = value` : Obtêm/Define a velocidade da reprodução.
+- Callbacks: quando o estado é alterado, quando a posição é alterada, ...
 
-## How to Contribute
+## Como contribuir
 
-### Submitting an issue
+### Submetendo uma issue
 
-Use the [issue tracker](https://github.com/mjbrusso/audioplayer/issues) to submit bug reports and features or enhancements requests.
-
-
-### Translating
-
-You can contribute by translating this document into other languages ​​(except *en* and *pt_br*).
-
-### Submitting a pull request
-
-If you can improve anything in this project, feel free to add a [pull request](https://github.com/mjbrusso/audioplayer/pulls).
+Use o [issue tracker](https://github.com/mjbrusso/audioplayer/issues) para relatar bugs e para requisitar novas features ou aprimoramentos.
 
 
-## License
+### Traduzindo
 
-**audioplayer** is under [MIT license](https://github.com/mjbrusso/audioplayer/blob/master/LICENSE). It can be reused within proprietary software provided that all copies of the licensed software include a copy of the MIT License terms and the copyright notice.
+Você pode contribuir traduzindo este documento para outras línguas (exceto *en* e *pt_br*).
+
+### Submetendo um pull request
+
+Se você aprimorar algo neste projeto, sinta-se à vontade para fazer um [pull request](https://github.com/mjbrusso/audioplayer/pulls).
+
+
+## Licença
+
+**audioplayer** é licensiado sob a [MIT license](https://github.com/mjbrusso/audioplayer/blob/master/LICENSE). 
+"It can be reused within proprietary software provided that all copies of the licensed software include a copy of the MIT License terms and the copyright notice."
