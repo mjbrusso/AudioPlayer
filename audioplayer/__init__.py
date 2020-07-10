@@ -4,6 +4,7 @@ __version__ = "0.6"
 
 from platform import system
 
+from .abstractaudioplayer import States
 if system() == 'Windows':
     from .audioplayer_windows import AudioPlayerWindows as AudioPlayer
 elif system() == 'Darwin':

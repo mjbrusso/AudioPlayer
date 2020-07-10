@@ -52,6 +52,9 @@ def changevolume(delta):
         player.volume += delta
         vollabel.config(text='{}%'.format(player.volume))
 
+def ttt():
+    vollabel.config(text=player.state if not player is None else 'X')
+    root.after(100, ttt)
 
 btnfont = (None, 30)
 lblfont = (None, 8)
@@ -87,4 +90,5 @@ volframe.pack(side=tkinter.LEFT, expand=1, fill=tkinter.BOTH)
 tkinter.Button(volframe, text='➕', command=lambda: changevolume(10)).pack(side=tkinter.TOP, expand=1, fill=tkinter.BOTH)
 tkinter.Button(volframe, text='➖', command=lambda: changevolume(-10)).pack(side=tkinter.TOP, expand=1, fill=tkinter.BOTH)
 
+root.after(100, ttt)
 root.mainloop()

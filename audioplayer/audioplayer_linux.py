@@ -60,3 +60,5 @@ class AudioPlayerLinux(AbstractAudioPlayer):
 
     def _doclose(self):
         self._dostop()
+
+# Duration a._player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND

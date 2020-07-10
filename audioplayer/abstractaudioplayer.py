@@ -1,12 +1,18 @@
 from abc import ABC, abstractmethod
 import os
 import sys
+from enum import Enum
 
 
 class AudioPlayerError(Exception):
     """Basic exception for errors raised by Player"""
     pass
 
+class States(Enum):
+    STOPPED = 0
+    PLAYING = 1
+    PAUSED = 2
+    CLOSED = 3
 
 class AbstractAudioPlayer(ABC):
     """
@@ -22,6 +28,7 @@ class AbstractAudioPlayer(ABC):
         self._player = None         # Lazy loaded
         self._filename = filename   # The file name as provided
         self._volume = 100          # 100%
+        self._state = States.PAUSED
         if not os.path.sep in filename:
             self._fullfilename = os.path.join(
                 os.getcwd(), filename)  # Full file name (with path)
@@ -43,16 +50,23 @@ class AbstractAudioPlayer(ABC):
     @property
     def filename(self):
         """
-        The file name as provided in the constructor.
+        Gets the file name as provided in the constructor.
         """
         return self._filename
 
     @property
     def fullfilename(self):
         """
-        Full file name with full path.
+        Gets the full file name with full path.
         """
         return self._fullfilename
+
+    @property
+    def state(self):
+        """
+        Gets the current state
+        """
+        return self._state
 
     @property
     def volume(self):
@@ -111,6 +125,7 @@ class AbstractAudioPlayer(ABC):
             self._player = self.load_player()
 
         self._do_setvolume(self._volume)
+        self._state = States.PLAYING
         self._doplay(loop, block)
 
     @abstractmethod
@@ -125,6 +140,8 @@ class AbstractAudioPlayer(ABC):
         Pauses audio playback.
         """
         if not self._player is None:
+            if self.state==States.PLAYING:
+                self._state = States.PAUSED
             self._dopause()
 
     @abstractmethod
@@ -139,6 +156,8 @@ class AbstractAudioPlayer(ABC):
         Resumes audio playback.
         """
         if not self._player is None:
+            if self.state==States.PAUSED:
+                self._state = States.PLAYING
             self._doresume()
 
     @abstractmethod
@@ -153,6 +172,7 @@ class AbstractAudioPlayer(ABC):
         Stops audio playback. Can play again.
         """
         if not self._player is None:
+            self._state = States.STOPPED
             self._dostop()
 
     @abstractmethod
@@ -167,6 +187,7 @@ class AbstractAudioPlayer(ABC):
         Closes device, releasing resources. Can't play again.
         """
         if not self._player is None:
+            self._state = States.CLOSED
             self._doclose()
             self._player = None
 
