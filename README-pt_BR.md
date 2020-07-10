@@ -16,6 +16,7 @@ Leia esta documentação em outra linguagem: [🇧🇷](README-pt_BR.md) [🇬�
 * [Instalação](#Instalação)
 * [API](#API)
 * [Sistemas Suportados](#sistemas-suportados)
+* [Changelog](#changelog)
 * [Planos para o futuro](#planos-para-o-futuro)
 * [Como contribuir](#como-contribuir)
 * [Licença](#licença)
@@ -84,7 +85,7 @@ Após a instalação, você pode usar este código para testar (substitua "path/
 ```python
 from audioplayer import AudioPlayer
 
-# A reprodução para quando o objeto é destruído pelo coletor de lixo, então guarde uma referência para reproduçõs não bloqueantes.
+# A reprodução para quando o objeto é destruído pelo coletor de lixo, então guarde uma referência para reproduções não bloqueantes.
 AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ```
@@ -148,8 +149,13 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 `?`: *Ainda não testado*
 
-Deixe-me saber se você est'usando em outro sistema/distro/versão!
+Deixe-me saber se você está usando em outro sistema/distro/versão!
 
+## Changelog
+
+- [[0.6] 2020-07-01](CHANGELOG.md#06---2020-07-01)
+  
+  
 ## Planos para o futuro 
 - `.seek(position)` : Move a reprodução para a posição indicada.
 - `.state` :  Estado atual (executando, parado, pausado, ...)

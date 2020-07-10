@@ -16,6 +16,7 @@ Read this in another languages: [🇧🇷](README-pt_BR.md) [🇬🇧 🇺🇸](
 * [Install](#Install)
 * [API](#API)
 * [Suported Systems](#Suported-Systems)
+* [Changelog](#changelog)
 * [What's in the roadmap?](#whats-in-the-roadmap)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
@@ -150,6 +151,10 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 `?`: *Not yet tested*
 
 Let me know if you are using on another system/distro/version!
+
+## Changelog
+
+- [[0.6] 2020-07-01](CHANGELOG.md#06---2020-07-01)
 
 ## What's in the roadmap? 
 - `.seek(position)` : Moves playback to the specified position.
