@@ -10,7 +10,7 @@ class AudioPlayerError(Exception):
 
 
 class States(Enum):
-    STOPPED = 0     #
+    STOPPED = 0    
     PLAYING = 1
     PAUSED = 2
     CLOSED = 3
@@ -22,7 +22,7 @@ class AbstractAudioPlayer(ABC):
     Must create a subclass for every platform.
     """
     @abstractmethod
-    def __init__(self, filename, loadnow):
+    def __init__(self, filename):
         """
         Only store filename and fullfilename.
         The actual player is lazy loaded - created in the first call to .play() 
@@ -39,8 +39,6 @@ class AbstractAudioPlayer(ABC):
         if not os.path.exists(self._fullfilename):
             raise FileNotFoundError(
                 'File does not exist: "{}"'.format(self._fullfilename))
-        if loadnow:
-            self.load_player()
 
     def __del__(self):
         """

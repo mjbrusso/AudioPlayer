@@ -93,12 +93,20 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## API
 
+### States
+
+```States(Enum):
+    STOPPED = 0    
+    PLAYING = 1
+    PAUSED = 2
+    CLOSED = 3
+```
+
 ### Creation
 
-- `audioplayer.AudioPlayer(filename, loadnow=False)`<br>
+- `audioplayer.AudioPlayer(filename)`<br>
   Creates the player.
     - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
-    - `loadnow` : *bool* – Whether to load the track immediately. Useful to obtain its duration time, without having to play it. (by default, resources are only loaded on the first call to the play() method)
   
   Raise: `FileNotFoundError()` :  The file does not exist.
 
@@ -110,6 +118,17 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 - `fullfilename` : *str*  (readonly)<br> 
   The file name with full path.
+
+- `state` : *str*  (readonly)<br> 
+  Gets the current state.
+
+  ```python3
+    States(Enum):
+        STOPPED = 0    
+        PLAYING = 1
+        PAUSED = 2
+        CLOSED = 3
+  ```
 
 - `duration` : *float* <br> 
   Gets the duration of the track, in seconds.
@@ -146,19 +165,19 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## Suported Systems
 
-**audioPlayer** has been tested on the following platforms:
+**audioPlayer** has been tested, using `test/test_formats.py` script, on the following platforms:
 
-| OS        | Details                |  mp3  |  wav  |  ogg  |  mid  |
-| --------- | ---------------------- | :---: | :---: | :---: | :---: |
-| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓   |   ✓   |   ✕   |
-| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓   |   ✓   |   ✓   |
-| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓   |   ✓   |   ✓   |
-| Windows   | Windows 10 x64         |   ✓   |   ✓   |   ✕   |   ✓   |
-| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓   |   ✕   |   ✕   |
+| OS        | Details                |  mp3  |  wav  |  ogg  |  mid  |  flac  |  wma  |
+| --------- | ---------------------- | :---: | :---: | :---: | :---: | :---: | :---: |
+| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓  |   ✓   |   ✕   |   ✓   |   ✓   |
+| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓  |   ✓   |   ✓   |   ?   |   ?   |
+| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓  |   ✓   |   ✓   |   ?   |   ?   |
+| Windows   | Windows 10 x64         |   ✓   |   ✓  |   ✕   |   ✓   |   ✕   |   ✓   |
+| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓  |   ✕   |   ✕   |   ?   |   ?   |
 
 `?`: *Not yet tested*
 
-Let me know if you are using on another system/distro/version!
+Let me know if you are using on another system/distro/version! 
 
 ## Changelog
 

@@ -4,10 +4,8 @@ from time import sleep
 
 
 class AudioPlayerMacOS(AbstractAudioPlayer):
-    def __init__(self, filename, loadnow=False):
-        super().__init__(filename, loadnow)
-        # self._url = NSURL.URLWithString_('file://{}'.format(self._filename))
-        # or ? self._url = NSURL.fileURLWithPath_(sound)    # this seems to work
+    def __init__(self, filename):
+        super().__init__(filename)
 
     def _do_load_player(self):
         return NSSound.alloc().initWithContentsOfFile_byReference_(self._filename, True)

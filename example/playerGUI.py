@@ -33,18 +33,16 @@ class Player():
         self.timer_id = None
         self.autorepeat = False
 
-    def load(self, autoplay=False):
+    def load(self):
         fname = filedialog.askopenfilename()
         if fname:
-            self.player = audioplayer.AudioPlayer(fname, True)
+            self.player = audioplayer.AudioPlayer(fname)
             self.namelabel.config(
                 text=os.path.basename(self.player.fullfilename))
-            self.resetui()
-            if autoplay:
-                try:
-                    self.rewind()
-                except Exception as e:
-                    messagebox.showerror('Error', e)
+            try:
+                self.rewind()
+            except Exception as e:
+                messagebox.showerror('Error', e)
 
     def resetui(self):
         self.poslabel.config(text=self.format_time(0.0))
@@ -73,15 +71,15 @@ class Player():
             self.timer_id = self.root.after(100, self.timer)
 
     def playpause(self):
-        if self.player is not None:
+        if self.player is None:
+            self.load()
+        else:
             if self.player.state == audioplayer.States.STOPPED:
                 self.rewind()
             elif self.player.state == audioplayer.States.PAUSED:
                 self.player.resume()
             else:
                 self.player.pause()
-        else:
-            self.load(True)
 
     def stop(self):
         if self.player is not None:

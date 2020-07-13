@@ -96,10 +96,9 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ### Criação
 
-- `audioplayer.AudioPlayer(filename, loadnow=False)`<br>
+- `audioplayer.AudioPlayer(filename)`<br>
   Cria o player.
     - `filename` : *str* – Nome do arquivo, com extensão  (.mp3, .wav, ...)
-    - `loadnow` : *bool* – Carregar a faixa imediatamente? Útil para obter seu tempo de duração, sem precisar reproduzi-lo. (por padrão, os recursos são carregados apenas na primeira chamada para o método play ())
   
   Raise: `FileNotFoundError()` :  O arquivo não existe.
 
@@ -111,6 +110,18 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 - `fullfilename` : *str*  (readonly)<br> 
   O nome do arquivo, com caminho completo.
+
+
+- `state` : *str*  (readonly)<br> 
+  Obtém o estado atual.
+
+  ```python3
+    States(Enum):
+        STOPPED = 0    
+        PLAYING = 1
+        PAUSED = 2
+        CLOSED = 3
+  ```
 
 - `duration` : *float* <br> 
   Obtém o tempo de duração do trilha, em segundos.
@@ -145,15 +156,15 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## Sistemas Suportados
 
-**audioPlayer** foi testado nas seguintes plataformas:
+**audioPlayer** foi testado com o script `test/test_formats.py`, nas seguintes plataformas:
 
-| OS        | Detalhes               |  mp3  |  wav  |  ogg  |  mid  |
-| --------- | ---------------------- | :---: | :---: | :---: | :---: |
-| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓   |   ✓   |   ✕   |
-| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓   |   ✓   |   ✓   |
-| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓   |   ✓   |   ✓   |
-| Windows   | Windows 10 x64         |   ✓   |   ✓   |   ✕   |   ✓   |
-| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓   |   ✕   |   ✕   |
+| OS        | Details                |  mp3  |  wav  |  ogg  |  mid  |  flac  |  wma  |
+| --------- | ---------------------- | :---: | :---: | :---: | :---: | :---: | :---: |
+| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓  |   ✓   |   ✕   |   ✓   |   ✕   |
+| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓  |   ✓   |   ✓   |   ?   |   ?   |
+| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓  |   ✓   |   ✓   |   ?   |   ?   |
+| Windows   | Windows 10 x64         |   ✓   |   ✓  |   ✕   |   ✓   |   ✕   |   ✓   |
+| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓  |   ✕   |   ✕   |   ?   |   ?   |
 
 `?`: *Ainda não testado*
 

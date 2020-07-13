@@ -3,8 +3,8 @@ from ctypes import windll, create_unicode_buffer
 
 
 class AudioPlayerWindows(AbstractAudioPlayer):
-    def __init__(self, filename, loadnow=False):
-        super().__init__(filename, loadnow)
+    def __init__(self, filename):
+        super().__init__(filename)
         self._alias = "A{}".format(id(self))
         self._buffer = create_unicode_buffer(255)
 
@@ -29,7 +29,7 @@ class AudioPlayerWindows(AbstractAudioPlayer):
         return float(position or 0) / 1000
 
     def _set_position(self, pos):
-        pos = int(pos * 1000)
+        pos = int(float(pos) * 1000)
         if True or self.state == States.PLAYING:
             self._mciSendString('play {} from {}'.format(self._alias, pos))
             if self.state == States.PAUSED:
@@ -56,6 +56,7 @@ class AudioPlayerWindows(AbstractAudioPlayer):
 
     def _dostop(self):
         self._mciSendString('stop {}'.format(self._alias))
+        self._mciSendString('seek {} to 0'.format(self._alias))
 
     def _doclose(self):
         self._mciSendString('close {}'.format(self._alias))
