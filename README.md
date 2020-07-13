@@ -91,6 +91,10 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ```
 
+See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) for a full example.
+
+[playerGUI](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/playerGUI.png) 
+
 ## API
 
 ### Creation
