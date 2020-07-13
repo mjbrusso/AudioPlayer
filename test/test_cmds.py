@@ -7,12 +7,16 @@ p = AudioPlayer(mp3)
 
 print('Playing {} in loop'.format(p.fullfilename))
 p.play(block=False, loop=True)
+print('Duration: {} s'.format(p.duration))
 
 input('Press Enter to pause ')
 p.pause()
 
-input('Press Enter to resume ')
+input('Current position: {}\nPress Enter to resume '.format(p.position))
 p.resume()
+
+input('Press Enter to go to 00:02.2 ')
+p.position = 2.2
 
 input('Press Enter to set volume to 1% ')
 p.volume = 1

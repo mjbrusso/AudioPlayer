@@ -11,25 +11,31 @@ Gst.init(None)
 
 
 class AudioPlayerLinux(AbstractAudioPlayer):
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, loadnow=False):
+        super().__init__(filename, loadnow)
         self._uri = self.fullfilename if 'file:' in self.fullfilename else 'file://{}'.format(
             pathname2url(self.fullfilename))
         self._signal = None
 
-    def _load_player(self):
+    def _do_load_player(self):
         return Gst.ElementFactory.make('playbin', None)
 
-    def _do_setvolume(self, value):
+    def _get_position(self):
+        res, time = self._player.query_position(Gst.Format.TIME)
+        return time / Gst.SECOND if res else 0.0
+
+    def _set_position(self, position):
+        self._player.seek_simple(
+            Gst.Format.TIME, Gst.SeekFlags.FLUSH, position * Gst.SECOND)
+
+    def _get_duration(self):
+        return self._player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND
+
+    def _set_volume(self, value):
         volume = value / 100.0              # 0.0..1.0
         self._player.set_property('volume', volume)
 
     def _doplay(self, loop=False, block=False):
-        """
-        Starts audio playback.
-            - loop:  bool – Sets whether to repeat the track automatically when finished.
-            - block: bool – If true, blocks the thread until playback ends.
-        """
         if not self._signal is None:
             self._player.disconnect(self._signal)
             self._signal = None
@@ -60,5 +66,3 @@ class AudioPlayerLinux(AbstractAudioPlayer):
 
     def _doclose(self):
         self._dostop()
-
-# Duration a._player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND

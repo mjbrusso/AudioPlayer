@@ -8,11 +8,13 @@ class AudioPlayerError(Exception):
     """Basic exception for errors raised by Player"""
     pass
 
+
 class States(Enum):
-    STOPPED = 0
+    STOPPED = 0     #
     PLAYING = 1
     PAUSED = 2
     CLOSED = 3
+
 
 class AbstractAudioPlayer(ABC):
     """
@@ -20,7 +22,7 @@ class AbstractAudioPlayer(ABC):
     Must create a subclass for every platform.
     """
     @abstractmethod
-    def __init__(self, filename):
+    def __init__(self, filename, loadnow):
         """
         Only store filename and fullfilename.
         The actual player is lazy loaded - created in the first call to .play() 
@@ -37,15 +39,24 @@ class AbstractAudioPlayer(ABC):
         if not os.path.exists(self._fullfilename):
             raise FileNotFoundError(
                 'File does not exist: "{}"'.format(self._fullfilename))
+        if loadnow:
+            self.load_player()
 
     def __del__(self):
         """
         Stops the player when the object gets destroyed.
         """
-        if not self._player is None:
+        if self.loaded:
             self.close()
 
     # region Properties
+
+    @property
+    def loaded(self):
+        """
+        Gets whether the player is already created
+        """
+        return self._player is not None
 
     @property
     def filename(self):
@@ -68,6 +79,53 @@ class AbstractAudioPlayer(ABC):
         """
         return self._state
 
+    @abstractmethod
+    def _get_duration(self):
+        """
+        Platform dependent code to get duration.
+        """
+        pass
+
+    @property
+    def duration(self):
+        """
+        Gets the duration of the track, in seconds.
+        """
+        return self._get_duration()
+
+    @abstractmethod
+    def _get_position(self):
+        """
+        Platform dependent code to query current position.
+        """
+        pass
+
+    @abstractmethod
+    def _set_position(self, position):
+        """
+        Platform dependent code to set playback position.
+        """
+
+    @property
+    def position(self):
+        """
+        Gets or sets the current playback position, in seconds.
+        """
+        return self._get_position()
+
+    @position.setter
+    def position(self, value):
+        if self.loaded:
+            value = max(min(value, self.duration), 0)
+            self._set_position(value)
+
+    @abstractmethod
+    def _set_volume(self, value):
+        """
+        Platform dependent code to setting volume.
+        """
+        pass
+
     @property
     def volume(self):
         """
@@ -81,32 +139,24 @@ class AbstractAudioPlayer(ABC):
     @volume.setter
     def volume(self, value):
         self._volume = max(min(value, 100), 0)  # clamp to [0..100]
-        if not self._player is None:
-            self._do_setvolume(value)
-
-    @abstractmethod
-    def _do_setvolume(self, value):
-        """
-        Platform dependent code to setting volume.
-        """
-        pass
+        if self.loaded:
+            self._set_volume(self._volume)
 
     # endregion Properties
 
     # region Methods
     @abstractmethod
-    def _load_player(self):
+    def _do_load_player(self):
         """
         Platform dependent code
         """
         pass
 
     def load_player(self):
-        player = self._load_player()
-        if player is None:
+        self._player = self._do_load_player()
+        if self._player is None:
             raise AudioPlayerError(
                 'Error loading player for file "{}"'.format(self._fullfilename))
-        return player
 
     @abstractmethod
     def _doplay(self, loop=False, block=False):
@@ -122,9 +172,9 @@ class AbstractAudioPlayer(ABC):
             - block: bool – If true, blocks the thread until playback ends.
         """
         if self._player is None:                     # Lazy loading
-            self._player = self.load_player()
+            self.load_player()
 
-        self._do_setvolume(self._volume)
+        self._set_volume(self._volume)
         self._state = States.PLAYING
         self._doplay(loop, block)
 
@@ -139,8 +189,8 @@ class AbstractAudioPlayer(ABC):
         """
         Pauses audio playback.
         """
-        if not self._player is None:
-            if self.state==States.PLAYING:
+        if self.loaded:
+            if self.state == States.PLAYING:
                 self._state = States.PAUSED
             self._dopause()
 
@@ -155,8 +205,8 @@ class AbstractAudioPlayer(ABC):
         """
         Resumes audio playback.
         """
-        if not self._player is None:
-            if self.state==States.PAUSED:
+        if self.loaded:
+            if self.state == States.PAUSED:
                 self._state = States.PLAYING
             self._doresume()
 
@@ -171,7 +221,7 @@ class AbstractAudioPlayer(ABC):
         """
         Stops audio playback. Can play again.
         """
-        if not self._player is None:
+        if self.loaded:
             self._state = States.STOPPED
             self._dostop()
 
@@ -186,7 +236,7 @@ class AbstractAudioPlayer(ABC):
         """
         Closes device, releasing resources. Can't play again.
         """
-        if not self._player is None:
+        if self.loaded:
             self._state = States.CLOSED
             self._doclose()
             self._player = None

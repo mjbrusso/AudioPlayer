@@ -95,9 +95,10 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ### Creation
 
-- `audioplayer.AudioPlayer(filename)`<br>
+- `audioplayer.AudioPlayer(filename, loadnow=False)`<br>
   Creates the player.
     - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
+    - `loadnow` : *bool* – Whether to load the track immediately. Useful to obtain its duration time, without having to play it. (by default, resources are only loaded on the first call to the play() method)
   
   Raise: `FileNotFoundError()` :  The file does not exist.
 
@@ -110,9 +111,16 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 - `fullfilename` : *str*  (readonly)<br> 
   The file name with full path.
 
+- `duration` : *float* <br> 
+  Gets the duration of the track, in seconds.
+
+- `position` : *float* <br> 
+  Gets or sets the current playback position, in seconds.
 
 - `volume` : *int* <br> 
   Gets or sets the current volume (in %) of the audio (0 — 100)
+
+
 
 ### Methods
 

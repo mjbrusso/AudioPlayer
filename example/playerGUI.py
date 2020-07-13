@@ -1,94 +1,192 @@
-from audioplayer import AudioPlayer
-import tkinter
+import audioplayer
+from tkinter import *
 from tkinter import filedialog, messagebox
 import os
 from platform import system
 
-paused = False
-player = None
-buttons_glyph = ('⏏','▶', '⏯' ,'⏹')  if system() == 'Windows' else ('⏏️', '▶️', '⏯️', '⏹️')
 
-def load():
-    global player, root
-    fname = filedialog.askopenfilename()
-    if fname:
-        player = AudioPlayer(fname)
-        changevolume(0)  # update UI
-        namelabel.config(text=os.path.basename(player.fullfilename))
-        try:
-            player.play()
-        except Exception as e:
-            messagebox.showerror('Error', e)
+class PlayerButton(Button):
+    def __init__(self, master=None, imagefile='', **options):
+        options.setdefault('border', 0)
+        options.setdefault('height', 60)
+        options.setdefault('width', 50)
+        if type(imagefile) != list and type(imagefile) != tuple:
+            imagefile = (str(imagefile), )
+
+        self._image = []
+        for name in imagefile:
+            self._image.append(PhotoImage(file=os.path.join(
+                os.path.dirname(__file__), 'icons', name)))
+
+        options.setdefault('image', self._image[0])
+        super().__init__(master, **options)
+        self.pack(side=LEFT)
+
+    def change_image(self, pos):
+        self.configure(image=self._image[pos])
 
 
-def tooglepause():
-    global player, paused
-    if not player is None:
-        if paused:
-            player.resume()
+class Player():
+    def __init__(self):
+        self.player = None
+        self.buildUI()
+        self.timer_id = None
+        self.autorepeat = False
+
+    def load(self, autoplay=False):
+        fname = filedialog.askopenfilename()
+        if fname:
+            self.player = audioplayer.AudioPlayer(fname, True)
+            self.namelabel.config(
+                text=os.path.basename(self.player.fullfilename))
+            self.resetui()
+            if autoplay:
+                try:
+                    self.rewind()
+                except Exception as e:
+                    messagebox.showerror('Error', e)
+
+    def resetui(self):
+        self.poslabel.config(text=self.format_time(0.0))
+        self.durationlabel.config(text=self.format_time(self.player.duration))
+        self.posscale.config(to=self.player.duration)
+        self.posvar.set(0.0)
+
+    def timer(self):
+        pos = self.player.position
+        self.posvar.set(pos)
+        self.poslabel.config(text=self.format_time(pos))
+        if pos >= self.player.duration:
+            if self.autorepeat:
+                self.rewind()
+            else:
+                self.player.stop()
         else:
-            player.pause()
-        paused = not paused
+            self.timer_id = self.root.after(100, self.timer)
+
+    def rewind(self):
+        if self.player is not None:
+            self.player.play()
+            self.resetui()
+            if self.timer_id is not None:
+                self.root.after_cancel(self.timer_id)
+            self.timer_id = self.root.after(100, self.timer)
+
+    def playpause(self):
+        if self.player is not None:
+            if self.player.state == audioplayer.States.STOPPED:
+                self.rewind()
+            elif self.player.state == audioplayer.States.PAUSED:
+                self.player.resume()
+            else:
+                self.player.pause()
+        else:
+            self.load(True)
+
+    def stop(self):
+        if self.player is not None:
+            self.player.stop()
+            self.posvar.set(0)
+            self.poslabel.config(text=self.format_time(0.0))
+
+    def changevolume(self, delta):
+        if self.player is not None:
+            self.player.volume += delta
+            self.vollabel.config(text='{}%'.format(self.player.volume))
+
+    def seek(self, pos):
+        if self.player is not None:
+            if self.player.state == audioplayer.States.STOPPED:
+                self.rewind()
+                self.player.pause()
+            if self.player.position != self.posscale.get():
+                self.player.position = self.posscale.get()
+                self.poslabel.config(text=self.format_time(pos))
+
+    def repeat(self):
+        self.autorepeat = not self.autorepeat
+        self.repeatbutton.change_image(int(self.autorepeat))
+
+    def nop(self):
+        pass
+
+    def format_time(self, value):
+        value = float(value)
+        d = value - int(value)
+        value = int(value)
+        m = value // 60
+        s = value % 60
+        return '{:02d}:{:02d}{}'.format(m, s, '{:.1f}'.format(d).replace('0.', '.'))
+
+    def buildUI(self):
+        self.root = Tk()
+        self.root.title('Music Player')
+        self.root.geometry("600x200")
+        self.root.attributes('-topmost', True)
+        self.root.resizable(False, False)
+        self.root.attributes('-topmost', False)
+
+        self.mainframe = Frame(width=500)
+        self.mainframe.pack(fill=BOTH, expand=1)
+
+        self.namelabel = Label(self.mainframe, text="No file opened",
+                               anchor=W,
+                               font=(None, 16))
+        self.namelabel.pack(side=TOP, pady=20)
+
+        self.positionframe = Frame(self.mainframe)
+        self.positionframe.pack(side=TOP, fill=BOTH, expand=1, padx=6)
+        self.poslabel = Label(self.positionframe, text='00:00.0', width=7,
+                              anchor=W)
+        self.poslabel.pack(side=LEFT, padx=0)
+        self.posvar = DoubleVar()
+        self.posscale = Scale(self.positionframe, orient=HORIZONTAL, from_=0,
+                              to=5.5, resolution=0.1, showvalue=False,
+                              sliderlength=8, command=self.seek, variable=self.posvar)
+
+        self.posscale.pack(side=LEFT, expand=1, fill=X, padx=5)
+
+        self.durationlabel = Label(self.positionframe,
+                                   text='00:00.0', width=7, anchor=E)
+        self.durationlabel.pack(side=RIGHT, padx=0)
+
+        self.buttonsframe = Frame(self.mainframe)
+        self.buttonsframe.pack(side=TOP, padx=5, ipady=10, expand=1, fill=X)
+
+        self.leftbuttonsframe = Frame(self.buttonsframe)
+        self.leftbuttonsframe.pack(side=LEFT, expand=1, fill=X)
+        self.addbutton = PlayerButton(self.leftbuttonsframe, imagefile='add.png',
+                                      command=self.load)
+        self.previousbutton = PlayerButton(self.leftbuttonsframe, imagefile='previous.png',
+                                           command=self.rewind)
+        self.playpausebutton = PlayerButton(self.leftbuttonsframe, width=60, imagefile='pause.png',
+                                            command=self.playpause)
+        self.stopbutton = PlayerButton(self.leftbuttonsframe, imagefile='stop.png',
+                                       command=self.stop)
+        # self.nextbutton = PlayerButton(self.leftbuttonsframe, imagefile='next.png',
+        #                               command=self.nop)
+        self.repeatbutton = PlayerButton(self.leftbuttonsframe, imagefile=('repeat.png', 'repeaton.png'),
+                                         command=self.repeat)
+        # self.deletebutton = PlayerButton(self.leftbuttonsframe, imagefile='delete.png',
+        #                                 command=self.nop)
+        # self.shufflebutton = PlayerButton(self.leftbuttonsframe, imagefile='shuffle.png',
+        #                                  command=self.nop)
+
+        self.volframe = Frame(self.buttonsframe)
+        self.volframe.pack(side=RIGHT, padx=(20, 0))
+        self.volumedownbutton = PlayerButton(self.volframe, imagefile='volumedown.png',
+                                             command=lambda: self.changevolume(-10))
+        self.vollabel = Label(self.volframe, text="100%", width=5)
+        self.vollabel.pack(side=LEFT)
+        self.volumeupbutton = PlayerButton(self.volframe, imagefile='volumeup.png',
+                                           command=lambda: self.changevolume(10))
+
+        #self.playlistbox = Listbox(self.mainframe)
+        #self.playlistbox.pack(side=BOTTOM, expand=1, fill=BOTH)
+
+    def run(self):
+        self.root.mainloop()
 
 
-def play():
-    global player
-    if not player is None:
-        try:
-            player.play()
-        except Exception as e:
-            messagebox.showerror('Error', e)
-
-
-def stop():
-    global player
-    if not player is None:
-        player.stop()
-
-
-def changevolume(delta):
-    global player, vollabel
-    if not player is None:
-        player.volume += delta
-        vollabel.config(text='{}%'.format(player.volume))
-
-def ttt():
-    vollabel.config(text=player.state if not player is None else 'X')
-    root.after(100, ttt)
-
-btnfont = (None, 30)
-lblfont = (None, 8)
-
-# Build UI
-root = tkinter.Tk()
-root.title('Music Player')
-root.attributes('-topmost', True)
-root.resizable(False, False)
-root.attributes('-topmost', False)
-
-botframe = tkinter.Frame()
-botframe.pack(fill=tkinter.X, side=tkinter.TOP)
-namelabel = tkinter.Label(botframe,
-                          anchor=tkinter.W, font=lblfont)
-namelabel.pack(fill=tkinter.X, expand=1, side=tkinter.LEFT, padx=2)
-vollabel = tkinter.Label(botframe, text='100%', anchor=tkinter.E, font=lblfont)
-vollabel.pack(side=tkinter.LEFT, padx=0)
-
-toolbar = tkinter.Frame(root)
-toolbar.pack(side=tkinter.TOP)
-tkinter.Button(toolbar, text=buttons_glyph[0], font=btnfont, width=2,
-               command=load).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text=buttons_glyph[1], font=btnfont, width=2,
-               command=play).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text=buttons_glyph[2], font=btnfont, width=2,
-               command=tooglepause).pack(side=tkinter.LEFT)
-tkinter.Button(toolbar, text=buttons_glyph[3], font=btnfont, width=2,
-               command=stop).pack(side=tkinter.LEFT)
-
-volframe = tkinter.Frame(toolbar)
-volframe.pack(side=tkinter.LEFT, expand=1, fill=tkinter.BOTH)
-tkinter.Button(volframe, text='➕', command=lambda: changevolume(10)).pack(side=tkinter.TOP, expand=1, fill=tkinter.BOTH)
-tkinter.Button(volframe, text='➖', command=lambda: changevolume(-10)).pack(side=tkinter.TOP, expand=1, fill=tkinter.BOTH)
-
-root.after(100, ttt)
-root.mainloop()
+if __name__ == "__main__":
+    Player().run()

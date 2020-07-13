@@ -4,15 +4,24 @@ from time import sleep
 
 
 class AudioPlayerMacOS(AbstractAudioPlayer):
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, loadnow=False):
+        super().__init__(filename, loadnow)
         # self._url = NSURL.URLWithString_('file://{}'.format(self._filename))
         # or ? self._url = NSURL.fileURLWithPath_(sound)    # this seems to work
 
-    def _load_player(self):
+    def _do_load_player(self):
         return NSSound.alloc().initWithContentsOfFile_byReference_(self._filename, True)
 
-    def _do_setvolume(self, value):
+    def _get_duration(self):
+        return self._player.duration()
+
+    def _get_position(self):
+        return self._player.currentTime()
+
+    def _set_position(self, pos):
+        return self._player.setCurrentTime(pos)
+
+    def _set_volume(self, value):
         self._player.setVolume_(value / 100.0)              # 0.0..1.0
 
     def _doplay(self, loop=False, block=False):
@@ -33,3 +42,5 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
 
     def _doclose(self):
         self._player.stop()
+
+    # https://github.com/elvis-epx/paimorse/blob/master/morse/audio_nsaudio.py

@@ -1,32 +1,48 @@
-from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError
-from ctypes import windll
+from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError, States
+from ctypes import windll, create_unicode_buffer
 
 
 class AudioPlayerWindows(AbstractAudioPlayer):
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, loadnow=False):
+        super().__init__(filename, loadnow)
         self._alias = "A{}".format(id(self))
+        self._buffer = create_unicode_buffer(255)
 
     def _mciSendString(self, command):
-        return windll.winmm.mciSendStringW(command, 0, 0, 0)
+        result = windll.winmm.mciSendStringW(command, self._buffer, 255, 0)
+        return result, self._buffer.value or ""
 
-    def _load_player(self):
-        ret = self._mciSendString('open "{}" type mpegvideo alias {}'.format(self._filename, self._alias))
+    def _do_load_player(self):
+        ret, _a = self._mciSendString('open "{}" type mpegvideo alias {}'.format(self._filename, self._alias))
+        ret = int(ret)
         if ret > 0:
             raise AudioPlayerError( 'Failed to play "{}"'.format(self.fullfilename))
+        self._mciSendString('set {} time format ms'.format(self._alias))
         return ret
 
-    def _do_setvolume(self, value):
-        volume = int(value * 10)  # MCI volume: 0...1000
+    def _get_duration(self):
+        _, length = self._mciSendString('status {} length'.format(self._alias))
+        return float(length or 0) / 1000
+
+    def _get_position(self):
+        _, position = self._mciSendString('status {} position'.format(self._alias))
+        return float(position or 0) / 1000
+
+    def _set_position(self, pos):
+        pos = int(pos * 1000)
+        if True or self.state == States.PLAYING:
+            self._mciSendString('play {} from {}'.format(self._alias, pos))
+            if self.state == States.PAUSED:
+                self._dopause()
+        else:
+            self._mciSendString('seek {} to {}'.format(self._alias, pos))
+
+    def _set_volume(self, value):
+        value = int(value * 10)  # MCI volume: 0...1000
         self._mciSendString(
-            'setaudio {} volume to {}'.format(self._alias, volume))
+            'setaudio {} volume to {}'.format(self._alias, value))
 
     def _doplay(self, loop=False, block=False):
-        """
-        Starts audio playback.
-            - loop:  bool – Sets whether to repeat the track automatically when finished.
-            - block: bool – If true, blocks the thread until playback ends.
-        """
         sloop = 'repeat' if loop else ''
         swait = 'wait' if block else ''
         self._mciSendString('play {} from 0 {} {}'.format(

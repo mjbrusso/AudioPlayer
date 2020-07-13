@@ -92,26 +92,34 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## API
 
+###
+
 ### Criação
 
-- `audioplayer.AudioPlayer(filename)`<br>
+- `audioplayer.AudioPlayer(filename, loadnow=False)`<br>
   Cria o player.
     - `filename` : *str* – Nome do arquivo, com extensão  (.mp3, .wav, ...)
+    - `loadnow` : *bool* – Carregar a faixa imediatamente? Útil para obter seu tempo de duração, sem precisar reproduzi-lo. (por padrão, os recursos são carregados apenas na primeira chamada para o método play ())
   
   Raise: `FileNotFoundError()` :  O arquivo não existe.
 
 ### Propriedades
 
 - `filename` : *str*  (readonly)<br> 
-  O nome do arquivo, tal quel formecido na criação.
+  O nome do arquivo, tal qual fornecido na criação.
 
 
 - `fullfilename` : *str*  (readonly)<br> 
   O nome do arquivo, com caminho completo.
 
+- `duration` : *float* <br> 
+  Obtém o tempo de duração do trilha, em segundos.
+
+- `position` : *float* <br> 
+  Obtém ou altera a posição atual da reprodução, em segundos.
 
 - `volume` : *int* <br> 
-  ObtÇem ou define o volume atual do audio (em %): 0 — 100
+  Obtém ou altera o volume atual do audio (em %): 0 — 100
 
 ### Métodos
 
