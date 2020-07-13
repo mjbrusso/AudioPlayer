@@ -93,15 +93,6 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## API
 
-### States
-
-```States(Enum):
-    STOPPED = 0    
-    PLAYING = 1
-    PAUSED = 2
-    CLOSED = 3
-```
-
 ### Creation
 
 - `audioplayer.AudioPlayer(filename)`<br>
@@ -129,6 +120,7 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
         PAUSED = 2
         CLOSED = 3
   ```
+  **Important**: Currently, `playaudio` does not automatically change the state from PLAYING to STOPPED when playback ends.
 
 - `duration` : *float* <br> 
   Gets the duration of the track, in seconds.

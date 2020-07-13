@@ -92,8 +92,6 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## API
 
-###
-
 ### Criação
 
 - `audioplayer.AudioPlayer(filename)`<br>
@@ -122,6 +120,7 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
         PAUSED = 2
         CLOSED = 3
   ```
+  **Atenção**: Atualmente, `playaudio` não muda automaticamente o estade de PLAYING para STOPPED quando termina a reprodução.
 
 - `duration` : *float* <br> 
   Obtém o tempo de duração do trilha, em segundos.
