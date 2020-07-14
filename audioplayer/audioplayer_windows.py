@@ -60,3 +60,5 @@ class AudioPlayerWindows(AbstractAudioPlayer):
 
     def _doclose(self):
         self._mciSendString('close {}'.format(self._alias))
+
+# https://stackoverflow.com/questions/5249903/receiving-wm-copydata-in-python

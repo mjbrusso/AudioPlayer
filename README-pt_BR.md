@@ -31,19 +31,12 @@ No GNU/Linus, você precisa instalar PyGObject e outras dependências.
 
 Ubuntu/Debian/Raspberry Pi OS:
 ```bash
-sudo apt-get install python-gst-1.0 \ 
-                     gir1.2-gstreamer-1.0 \ 
-                     gstreamer1.0-tools \
-                     gir1.2-gst-plugins-base-1.0 
-                     gstreamer1.0-plugins-good \
-                     gstreamer1.0-plugins-ugly                     
-```
+sudo apt install python-gst-1.0 gstreamer1.0-plugins-base 
+```     
 
 Redhat/Centos/Fedora:
 ```bash
-sudo yum install -y python-gstreamer1 \ 
-                    gstreamer1-plugins-good \
-                    gstreamer1-plugins-ugly
+sudo yum install -y python-gstreamer1 gstreamer1-plugins-base
 ```
 
 #### macOS
@@ -157,13 +150,13 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 **audioPlayer** foi testado com o script `test/test_formats.py`, nas seguintes plataformas:
 
-| OS        | Details                |  mp3  |  wav  |  ogg  |  mid  |  flac  |  wma  |
+| SO        | Detalhes               |  mp3  |  wav  |  ogg  |  mid  |  flac  |  wma  |
 | --------- | ---------------------- | :---: | :---: | :---: | :---: | :---: | :---: |
-| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓  |   ✓   |   ✕   |   ✓   |   ✕   |
-| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓  |   ✓   |   ✓   |   ?   |   ?   |
-| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓  |   ✓   |   ✓   |   ?   |   ?   |
+| GNU/Linux | Mint 19 (Cinnamon)     |   ✓   |   ✓  |   ✓   |   ✕   |   ✓   |   ✓   |
+| GNU/Linux | Xubuntu 20.04          |   ✓   |   ✓  |   ✓   |   ✓   |   ✓   |   ✓   |
+| GNU/Linux | Raspberry Pi OS        |   ✓   |   ✓  |   ✓   |   ✓   |   ✓   |   ✕   |
 | Windows   | Windows 10 x64         |   ✓   |   ✓  |   ✕   |   ✓   |   ✕   |   ✓   |
-| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓  |   ✕   |   ✕   |   ?   |   ?   |
+| macOS     | Catalina (Python 3.8)  |   ✓   |   ✓  |   ✕   |   ✕   |   ✓   |   ✕   |
 
 `?`: *Ainda não testado*
 

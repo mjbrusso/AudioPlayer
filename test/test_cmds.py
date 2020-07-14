@@ -8,13 +8,13 @@ p = AudioPlayer(mp3)
 print('Playing {} in loop'.format(p.fullfilename))
 p.play(block=False, loop=True)
 print('Current state: {}'.format(p.state))
-print('Duration: {} s'.format(p.duration))
+print('Duration: {:.2f} s'.format(p.duration))
 
 input('Press Enter to pause ')
 p.pause()
 print('Current state: {}'.format(p.state))
 
-input('Current position: {}\nPress Enter to resume '.format(p.position))
+input('Current position: {:.2f} s\nPress Enter to resume '.format(p.position))
 p.resume()
 print('Current state: {}'.format(p.state))
 

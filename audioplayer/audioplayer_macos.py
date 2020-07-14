@@ -17,13 +17,15 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
         return self._player.currentTime()
 
     def _set_position(self, pos):
-        return self._player.setCurrentTime(pos)
+        return self._player.setCurrentTime_(pos)
 
     def _set_volume(self, value):
         self._player.setVolume_(value / 100.0)              # 0.0..1.0
 
     def _doplay(self, loop=False, block=False):
         self._player.setLoops_(loop)
+        self._set_position(0)
+        self._player.resume()        
         self._player.play()
         while block:
             sleep(self._player.duration())
