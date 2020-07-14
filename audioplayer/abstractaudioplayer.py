@@ -22,7 +22,7 @@ class AbstractAudioPlayer(ABC):
     Must create a subclass for every platform.
     """
     @abstractmethod
-    def __init__(self, filename):
+    def __init__(self, filename, callback=None):
         """
         Only store filename and fullfilename.
         The actual player is lazy loaded - created in the first call to .play() 
@@ -31,6 +31,7 @@ class AbstractAudioPlayer(ABC):
         self._filename = filename   # The file name as provided
         self._volume = 100          # 100%
         self._state = States.PAUSED
+        self._finish_callback = callback
         if not os.path.sep in filename:
             self._fullfilename = os.path.join(
                 os.getcwd(), filename)  # Full file name (with path)
@@ -239,4 +240,9 @@ class AbstractAudioPlayer(ABC):
             self._doclose()
             self._player = None
 
+    def _on_finish(self):
+        self.state = States.STOPPED
+        if callable(self._finish_callback):
+            self._finish_callback()
+            
     # endregion Methods
