@@ -85,11 +85,24 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ## API
 
+### Estados
+
+```python3
+    State(Enum):
+        STOPPED = 0     # Posicionado em 00:00.0, pronto para iniciar reprodução
+        PLAYING = 1     # Executando
+        PAUSED = 2      # Pausado
+        CLOSED = 3      # Não pode executar novamente
+```
+
+[Diagrama de estados](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/state_diagram.png) 
+
 ### Criação
 
-- `audioplayer.AudioPlayer(filename)`<br>
+- `audioplayer.AudioPlayer(filename, callback)`<br>
   Cria o player.
     - `filename` : *str* – Nome do arquivo, com extensão  (.mp3, .wav, ...)
+    -`callback` : *function()* – Função de callback que será chamada quando a reprodução terminar (apenas se no modo de execução PlayMode.ONCE_ASYNC)
   
   Raise: `FileNotFoundError()` :  O arquivo não existe.
 
@@ -98,23 +111,12 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 - `filename` : *str*  (readonly)<br> 
   O nome do arquivo, tal qual fornecido na criação.
 
-
 - `fullfilename` : *str*  (readonly)<br> 
   O nome do arquivo, com caminho completo.
 
-
 - `state` : *str*  (readonly)<br> 
-  Obtém o estado atual.
-
-  ```python3
-    States(Enum):
-        STOPPED = 0    
-        PLAYING = 1
-        PAUSED = 2
-        CLOSED = 3
-  ```
-  **Atenção**: Atualmente, `playaudio` não muda automaticamente o estade de PLAYING para STOPPED quando termina a reprodução.
-
+  Obtém o [estado](#estados) atual.
+  
 - `duration` : *float* <br> 
   Obtém o tempo de duração do trilha, em segundos.
 

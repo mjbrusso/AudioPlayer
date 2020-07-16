@@ -1,10 +1,10 @@
-from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError, States
+from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError, State
 from ctypes import windll, create_unicode_buffer
 
 
 class AudioPlayerWindows(AbstractAudioPlayer):
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, callback=None):
+        super().__init__(filename, callback)
         self._alias = "A{}".format(id(self))
         self._buffer = create_unicode_buffer(255)
 
@@ -30,9 +30,9 @@ class AudioPlayerWindows(AbstractAudioPlayer):
 
     def _set_position(self, pos):
         pos = int(float(pos) * 1000)
-        if True or self.state == States.PLAYING:
+        if True or self.state == State.PLAYING:
             self._mciSendString('play {} from {}'.format(self._alias, pos))
-            if self.state == States.PAUSED:
+            if self.state == State.PAUSED:
                 self._dopause()
         else:
             self._mciSendString('seek {} to {}'.format(self._alias, pos))

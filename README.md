@@ -90,11 +90,25 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
 
 ## API
 
+### States
+
+```python3
+    State(Enum):
+        STOPPED = 0     # Position at 00:00.0, ready to start playing
+        PLAYING = 1     # Playing
+        PAUSED = 2      # Paused
+        CLOSED = 3      # Can't play again
+```
+
+[State Diagram](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/state_diagram.png) 
+
+
 ### Creation
 
-- `audioplayer.AudioPlayer(filename)`<br>
+- `audioplayer.AudioPlayer(filename, callback)`<br>
   Creates the player.
     - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
+    - `callback` : *function()* – Callback function to be called when playback ends (it's called only if the play mode is PlayMode.ONCE_ASYNC)
   
   Raise: `FileNotFoundError()` :  The file does not exist.
 
@@ -103,21 +117,11 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
 - `filename` : *str*  (readonly)<br> 
   The file name as provided in the constructor.
 
-
 - `fullfilename` : *str*  (readonly)<br> 
   The file name with full path.
 
 - `state` : *str*  (readonly)<br> 
-  Gets the current state.
-
-  ```python3
-    States(Enum):
-        STOPPED = 0    
-        PLAYING = 1
-        PAUSED = 2
-        CLOSED = 3
-  ```
-  **Important**: Currently, `playaudio` does not automatically change the state from PLAYING to STOPPED when playback ends.
+  Gets the current [state](#states).
 
 - `duration` : *float* <br> 
   Gets the duration of the track, in seconds.
@@ -129,13 +133,11 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
   Gets or sets the current volume (in %) of the audio (0 — 100)
 
 
-
 ### Methods
 
-- `play(loop=False, block=False)`<br>
+- `play(mode=PlayMode.ONCE_ASYNC)`<br>
   Starts audio playback.
-    - `loop` (*bool*) – Sets whether to repeat the track automatically when finished.
-    - `block` (*bool*) – If true, blocks the thread until playback ends.
+    - `mode`:  (*PlayMode*) –  ONCE_ASYNC or LOOP_ASYNC or ONCE_BLOCKING 
 
   Raise: `AudioPlayerError()`: Failed to play.
 

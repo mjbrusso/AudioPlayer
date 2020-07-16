@@ -14,8 +14,9 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
             if didFinish and callable(self.callback):
                 self.callback()
 
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, callback=None):
+        super().__init__(filename, callback)
+        self._delegate = None
 
     def _do_load_player(self):
         return NSSound.alloc().initWithContentsOfFile_byReference_(self._filename, True)
@@ -33,9 +34,11 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
         self._player.setVolume_(value / 100.0)              # 0.0..1.0
 
     def _doplay(self, loop=False, block=False):
-        self._delegate = self._SoundDelegate.alloc().init()
-        self._delegate.callback = self._on_finish
-        self._player.setDelegate_(self._delegate)
+        if not block:
+            if self._delegate is None:
+                self._delegate = self._SoundDelegate.alloc().init()
+            self._delegate.callback = self._on_finish
+            self._player.setDelegate_(self._delegate)
 
         self._player.setLoops_(loop)
         self._set_position(0)

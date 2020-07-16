@@ -8,12 +8,16 @@ class AudioPlayerError(Exception):
     """Basic exception for errors raised by Player"""
     pass
 
+class PlayMode(Enum):
+    ONCE_ASYNC = 0
+    LOOP_ASYNC = 1
+    ONCE_BLOCKING = 2
 
-class States(Enum):
-    STOPPED = 0    
-    PLAYING = 1
-    PAUSED = 2
-    CLOSED = 3
+class State(Enum):
+    STOPPED = 0     # Position at 00:00.0, ready to start playing
+    PLAYING = 1     # Playing
+    PAUSED = 2      # Paused
+    CLOSED = 3      # Can't play again
 
 
 class AbstractAudioPlayer(ABC):
@@ -30,7 +34,7 @@ class AbstractAudioPlayer(ABC):
         self._player = None         # Lazy loaded
         self._filename = filename   # The file name as provided
         self._volume = 100          # 100%
-        self._state = States.PAUSED
+        self._state = State.STOPPED
         self._finish_callback = callback
         if not os.path.sep in filename:
             self._fullfilename = os.path.join(
@@ -152,30 +156,33 @@ class AbstractAudioPlayer(ABC):
         pass
 
     def load_player(self):
+        """
+        Alloc/Load resources
+        """
         self._player = self._do_load_player()
         if self._player is None:
+            self._state = State.CLOSED
             raise AudioPlayerError(
                 'Error loading player for file "{}"'.format(self._fullfilename))
 
     @abstractmethod
-    def _doplay(self, loop=False, block=False):
+    def _doplay(self, mode):
         """
         Platform dependent code
         """
         pass
 
-    def play(self, loop=False, block=False):
+    def play(self, mode=PlayMode.ONCE_ASYNC):
         """
         Starts audio playback.
-            - loop:  bool – Sets whether to repeat the track automatically when finished.
-            - block: bool – If true, blocks the thread until playback ends.
+            - mode:  PlayMode –  ONCE_ASYNC or LOOP_ASYNC or ONCE_BLOCKING 
         """
         if self._player is None:                     # Lazy loading
             self.load_player()
 
         self._set_volume(self._volume)
-        self._state = States.PLAYING
-        self._doplay(loop, block)
+        self._state = State.PLAYING
+        self._doplay(mode)
 
     @abstractmethod
     def _dopause(self):
@@ -189,8 +196,8 @@ class AbstractAudioPlayer(ABC):
         Pauses audio playback.
         """
         if self.loaded:
-            if self.state == States.PLAYING:
-                self._state = States.PAUSED
+            if self.state == State.PLAYING:
+                self._state = State.PAUSED
             self._dopause()
 
     @abstractmethod
@@ -205,8 +212,8 @@ class AbstractAudioPlayer(ABC):
         Resumes audio playback.
         """
         if self.loaded:
-            if self.state == States.PAUSED:
-                self._state = States.PLAYING
+            if self.state == State.PAUSED:
+                self._state = State.PLAYING
             self._doresume()
 
     @abstractmethod
@@ -221,7 +228,7 @@ class AbstractAudioPlayer(ABC):
         Stops audio playback. Can play again.
         """
         if self.loaded:
-            self._state = States.STOPPED
+            self._state = State.STOPPED
             self._dostop()
 
     @abstractmethod
@@ -236,13 +243,16 @@ class AbstractAudioPlayer(ABC):
         Closes device, releasing resources. Can't play again.
         """
         if self.loaded:
-            self._state = States.CLOSED
+            self._state = State.CLOSED
             self._doclose()
             self._player = None
 
     def _on_finish(self):
-        self.state = States.STOPPED
+        """
+        Called by platfom code when playback is finished.
+        """
+        self._state = State.STOPPED
         if callable(self._finish_callback):
             self._finish_callback()
-            
+
     # endregion Methods

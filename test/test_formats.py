@@ -1,4 +1,4 @@
-from audioplayer import AudioPlayer
+from audioplayer import *
 import os
 
 for fmt in ('mp3', 'wav', 'ogg', 'mid', 'flac', 'wma'): # ringtone by felipebbrusso'
@@ -7,6 +7,6 @@ for fmt in ('mp3', 'wav', 'ogg', 'mid', 'flac', 'wma'): # ringtone by felipebbru
     try:
         p = AudioPlayer(file)
         print('Playing {} file: {}'.format(fmt, soundfile))
-        p.play(block=True)
+        p.play(PlayMode.ONCE_BLOCKING)
     except Exception as e:
         print(e)

@@ -1,21 +1,32 @@
 # Inspired by https://stackoverflow.com/a/29704692
-#            https://gstreamer.freedesktop.org/documentation/additional/design/states.html?gi-language=python
+#            https://gstreamer.freedesktop.org/documentation/additional/design/State.html?gi-language=python
 
-from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError
+from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError, PlayMode
 from urllib.request import pathname2url
+from threading import Thread
 
 import gi
 gi.require_version('Gst', '1.0')
-from gi.repository import Gst
+from gi.repository import Gst, GObject
 Gst.init(None)
 
 
 class AudioPlayerLinux(AbstractAudioPlayer):
-    def __init__(self, filename):
-        super().__init__(filename)
+    _gloop_thread = None    # Class (static) field
+
+    def __init__(self, filename, callback=None):
+        super().__init__(filename, callback)
         self._uri = self.fullfilename if 'file:' in self.fullfilename else 'file://{}'.format(
             pathname2url(self.fullfilename))
-        self._signal = None
+        self._about_to_finish_signal = None
+        self._message_signal = None
+        if AudioPlayerLinux._gloop_thread is None:
+            # https://stackoverflow.com/a/7283584
+            # "If you don't plan on using GTK with the program, you will have to run a gobject.Mainloop() in order to get messages from the bus."
+            AudioPlayerLinux._gloop_thread = Thread(
+                target=GObject.MainLoop().run)
+            AudioPlayerLinux._gloop_thread.daemon = True
+            AudioPlayerLinux._gloop_thread.start()
 
     def _do_load_player(self):
         return Gst.ElementFactory.make('playbin', None)
@@ -35,13 +46,19 @@ class AudioPlayerLinux(AbstractAudioPlayer):
         volume = value / 100.0              # 0.0..1.0
         self._player.set_property('volume', volume)
 
-    def _doplay(self, loop=False, block=False):
-        if not self._signal is None:
-            self._player.disconnect(self._signal)
-            self._signal = None
-        if loop:
-            self._signal = self._player.connect('about-to-finish',
-                                                lambda msg: self._player.set_property('uri', self._uri))  # Repeat
+    def _on_message(self, bus, message):
+        if message.type == Gst.MessageType.EOS:
+            self._player.set_state(Gst.State.NULL)
+            self._on_finish()
+
+    def _doplay(self, mode):
+        if self._about_to_finish_signal is not None:
+            self._player.disconnect(self._about_to_finish_signal)
+            self._about_to_finish_signal = None
+
+        if mode == PlayMode.LOOP_ASYNC:
+            self._about_to_finish_signal = self._player.connect('about-to-finish', lambda msg: self._player.set_property(
+                'uri', self._uri))                                            #
 
         self._player.set_state(Gst.State.READY)
         self._player.set_property('uri', self._uri)
@@ -51,9 +68,17 @@ class AudioPlayerLinux(AbstractAudioPlayer):
             raise AudioPlayerError(
                 'Failed to play "{}"'.format(self.fullfilename))
 
-        if block:
-            self._player.get_bus().timed_pop_filtered(   # block until a matching message was posted on the bus
-                Gst.CLOCK_TIME_NONE, Gst.MessageType.ERROR | Gst.MessageType.EOS)
+        self._bus = self._player.get_bus()
+        if mode == PlayMode.ONCE_BLOCKING:
+            # block until a matching message was posted on the bus
+            self._bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE,
+                                         Gst.MessageType.ERROR | Gst.MessageType.EOS)
+            self._on_finish()
+        elif mode == PlayMode.ONCE_ASYNC:
+            self._bus.add_signal_watch()
+            if self._message_signal is not None:
+                self._bus.disconnect(self._message_signal)
+            self._message_signal = self._bus.connect("message", self._on_message)
 
     def _dopause(self):
         self._player.set_state(Gst.State.PAUSED)

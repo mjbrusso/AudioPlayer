@@ -74,9 +74,9 @@ class Player():
         if self.player is None:
             self.load()
         else:
-            if self.player.state == audioplayer.States.STOPPED:
+            if self.player.state == audioplayer.State.STOPPED:
                 self.rewind()
-            elif self.player.state == audioplayer.States.PAUSED:
+            elif self.player.state == audioplayer.State.PAUSED:
                 self.player.resume()
             else:
                 self.player.pause()
@@ -94,7 +94,7 @@ class Player():
 
     def seek(self, pos):
         if self.player is not None:
-            if self.player.state == audioplayer.States.STOPPED:
+            if self.player.state == audioplayer.State.STOPPED:
                 self.rewind()
                 self.player.pause()
             if self.player.position != self.posscale.get():
