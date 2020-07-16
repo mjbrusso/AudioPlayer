@@ -86,7 +86,7 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) for a full example.
 
-[playerGUI](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/playerGUI.png) 
+![playerGUI](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/playerGUI.png) 
 
 ## API
 
@@ -100,7 +100,7 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
         CLOSED = 3      # Can't play again
 ```
 
-[State Diagram](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/state_diagram.png) 
+![State Diagram](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/state_diagram.png) 
 
 
 ### Creation
