@@ -86,7 +86,7 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) for a full example.
 
-![playerGUI](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/playerGUI.png) 
+![playerGUI](/docs/playerGUI.png?raw=true) 
 
 ## API
 
@@ -100,7 +100,7 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
         CLOSED = 3      # Can't play again
 ```
 
-![State Diagram](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/state_diagram.png) 
+![State Diagram](/docs/state_diagram.png?raw=true) 
 
 
 ### Creation
@@ -175,10 +175,7 @@ Let me know if you are using on another system/distro/version!
 - [[0.6] 2020-07-01](CHANGELOG.md#06---2020-07-01)
 
 ## What's in the roadmap? 
-- `.seek(position)` : Moves playback to the specified position.
-- `.state` :  Current state (playing, stopped, paused, ...)
 - `.speed = value` : Gets/sets playback speed.
-- Callbacks: when state changed, when position changed by a delta, ...
 
 ## How to Contribute
 
