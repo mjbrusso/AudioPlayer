@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-import os
-import sys
+import os,  sys
 from enum import Enum
 
 
@@ -34,6 +33,7 @@ class AbstractAudioPlayer(ABC):
         self._player = None         # Lazy loaded
         self._filename = filename   # The file name as provided
         self._volume = 100          # 100%
+        self._initial_position = 0  # 100%
         self._state = State.STOPPED
         self._finish_callback = callback
         if not os.path.sep in filename:
@@ -94,7 +94,7 @@ class AbstractAudioPlayer(ABC):
         """
         Gets the duration of the track, in seconds.
         """
-        return self._get_duration()
+        return  self._get_duration()        
 
     @abstractmethod
     def _get_position(self):
@@ -113,14 +113,17 @@ class AbstractAudioPlayer(ABC):
     def position(self):
         """
         Gets or sets the current playback position, in seconds.
+        If a value is assigned before playback begins, sets the starting position.
         """
-        return self._get_position()
+        return self._get_position() if self.loaded else self._initial_position
 
     @position.setter
     def position(self, value):
         if self.loaded:
             value = max(min(value, self.duration), 0)
             self._set_position(value)
+        else:
+            self._initial_position = value
 
     @abstractmethod
     def _set_volume(self, value):
@@ -143,7 +146,7 @@ class AbstractAudioPlayer(ABC):
     def volume(self, value):
         self._volume = max(min(value, 100), 0)  # clamp to [0..100]
         if self.loaded:
-            self._set_volume(self._volume)
+            self._set_volume(self._volume)        
 
     # endregion Properties
 
@@ -180,7 +183,9 @@ class AbstractAudioPlayer(ABC):
         if self._player is None:                     # Lazy loading
             self.load_player()
 
-        self._set_volume(self._volume)
+        self.volume = self._volume
+        if self._initial_position > 0: 
+            self.position = self._initial_position
         self._state = State.PLAYING
         self._doplay(mode)
 

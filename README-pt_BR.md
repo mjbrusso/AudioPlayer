@@ -83,6 +83,11 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
 
 ```
 
+Veja [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) para um exemplo completo.
+
+![playerGUI](/docs/playerGUI.png?raw=true) 
+
+
 ## API
 
 ### Estados
@@ -95,7 +100,7 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
         CLOSED = 3      # Não pode executar novamente
 ```
 
-[Diagrama de estados](https://raw.githubusercontent.com/mjbrusso/game2dboard/master/docs/state_diagram.png) 
+[Diagrama de estados](/docs/state_diagram.png?raw=true) 
 
 ### Criação
 
@@ -121,7 +126,8 @@ AudioPlayer("path/to/somemusic.mp3").play(block=True)
   Obtém o tempo de duração do trilha, em segundos.
 
 - `position` : *float* <br> 
-  Obtém ou altera a posição atual da reprodução, em segundos.
+  Obtém ou altera a posição atual da reprodução, em segundos.<br>
+  Caso um valor seja atribuído antes do início da reprodução, define a posição inicial.
 
 - `volume` : *int* <br> 
   Obtém ou altera o volume atual do audio (em %): 0 — 100

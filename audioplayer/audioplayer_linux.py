@@ -20,6 +20,7 @@ class AudioPlayerLinux(AbstractAudioPlayer):
             pathname2url(self.fullfilename))
         self._about_to_finish_signal = None
         self._message_signal = None
+        self._saved_duration = 0.0
         if AudioPlayerLinux._gloop_thread is None:
             # https://stackoverflow.com/a/7283584
             # "If you don't plan on using GTK with the program, you will have to run a gobject.Mainloop() in order to get messages from the bus."
@@ -37,10 +38,13 @@ class AudioPlayerLinux(AbstractAudioPlayer):
 
     def _set_position(self, position):
         self._player.seek_simple(
-            Gst.Format.TIME, Gst.SeekFlags.FLUSH, position * Gst.SECOND)
+            Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT, position * Gst.SECOND)
 
     def _get_duration(self):
-        return self._player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND
+        duration = self._player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND
+        duration = max(duration, self._saved_duration)
+        self._saved_duration = duration
+        return duration
 
     def _set_volume(self, value):
         volume = value / 100.0              # 0.0..1.0
@@ -60,15 +64,21 @@ class AudioPlayerLinux(AbstractAudioPlayer):
             self._about_to_finish_signal = self._player.connect('about-to-finish', lambda msg: self._player.set_property(
                 'uri', self._uri))                                            #
 
-        self._player.set_state(Gst.State.READY)
+        self._saved_duration = 0.0
+        self._player.set_state(Gst.State.READY)   
         self._player.set_property('uri', self._uri)
-        self._player.set_state(Gst.State.PLAYING)
+        self._player.set_state(Gst.State.PLAYING)         
+        self._bus = self._player.get_bus()
+                        
+        if self._initial_position > 0:
+            self._bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE, Gst.MessageType.STREAM_START)
+            self._set_position(self._initial_position) 
+
         status = self._player.get_state(Gst.CLOCK_TIME_NONE)
         if status[0] == Gst.StateChangeReturn.FAILURE:
             raise AudioPlayerError(
                 'Failed to play "{}"'.format(self.fullfilename))
-
-        self._bus = self._player.get_bus()
+                
         if mode == PlayMode.ONCE_BLOCKING:
             # block until a matching message was posted on the bus
             self._bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE,

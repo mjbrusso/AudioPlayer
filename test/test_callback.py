@@ -21,9 +21,11 @@ while repeat != 'N':
     p1.play(PlayMode.ONCE_ASYNC)
     p2.play(PlayMode.ONCE_ASYNC)
     done = 0
-    while done < 2:
-        print('\rtoquesuave.mp3: {:4.1f}/{:4.1f} \t WarpDrive_01.mp3: {:4.1f}/{:4.1f} '.format(
-            p1.position, p1.duration, p2.position, p2.duration), flush=True, end='')
+    while True:
+        print('\rtoquesuave.mp3: {:3.1f}/{:3.1f} [{}]\t WarpDrive_01.mp3: {:3.1f}/{:3.1f} [{}] '.format(
+            p1.position, p1.duration, p1.state, p2.position, p2.duration, p2.state), flush=True, end='')
+        if done == 2: break
         time.sleep(0.1)
+
     repeat = input('\n\nRepeat [Y/N]: ').upper()
     done = False

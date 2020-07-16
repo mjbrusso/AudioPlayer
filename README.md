@@ -127,7 +127,8 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
   Gets the duration of the track, in seconds.
 
 - `position` : *float* <br> 
-  Gets or sets the current playback position, in seconds.
+  Gets or sets the current playback position, in seconds.<br>
+  If a value is assigned before playback begins, sets the starting position.
 
 - `volume` : *int* <br> 
   Gets or sets the current volume (in %) of the audio (0 — 100)

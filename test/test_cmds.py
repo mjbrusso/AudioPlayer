@@ -2,11 +2,12 @@ from audioplayer import AudioPlayer, PlayMode
 import os
 
 mp3 = os.path.join(os.path.dirname(__file__), 'audio', 'toquesuave.mp3') # ringtone by felipebbrusso'
-
 p = AudioPlayer(mp3)
 
+print('Current state: {}'.format(p.state))
 print('Playing "{}" once '.format(mp3))
 p.play(PlayMode.ONCE_BLOCKING)
+print('Current state: {}'.format(p.state))
 
 print('Playing {} in loop'.format(p.fullfilename))
 p.play(PlayMode.LOOP_ASYNC)
@@ -44,3 +45,10 @@ print('Current state: {}'.format(p.state))
 input('Press Enter to play once again ')
 p.play(PlayMode.ONCE_BLOCKING)
 print('Current state: {}'.format(p.state))
+
+mp3 = os.path.join(os.path.dirname(__file__), 'audio', 'WarpDrive_01.mp3') # www.littlerobotsoundfactory.com
+p = AudioPlayer(mp3)
+p.volume = 20
+p.position = 3.5
+print('Playing "{}" from {:.2f} s, volume={}%'.format(mp3, p.position, p.volume))
+p.play(PlayMode.ONCE_BLOCKING)
