@@ -1,4 +1,4 @@
-from .abstractaudioplayer import AbstractAudioPlayer
+from .abstractaudioplayer import *
 from AppKit import NSSound
 from time import sleep
 from Cocoa import NSObject
@@ -33,20 +33,19 @@ class AudioPlayerMacOS(AbstractAudioPlayer):
     def _set_volume(self, value):
         self._player.setVolume_(value / 100.0)              # 0.0..1.0
 
-    def _doplay(self, loop=False, block=False):
-        if not block:
+    def _doplay(self, mode):
+        if mode != PlayMode.LOOP_ASYNC:
             if self._delegate is None:
                 self._delegate = self._SoundDelegate.alloc().init()
             self._delegate.callback = self._on_finish
             self._player.setDelegate_(self._delegate)
 
-        self._player.setLoops_(loop)
-        self._set_position(0)
+        self._player.setLoops_(mode == PlayMode.LOOP_ASYNC)
+        self._set_position(self._initial_position)
         self._player.resume()
         self._player.play()
-        while block:
-            sleep(self._player.duration())
-            block = loop  # block && loop = infinite loop!!!!
+        while self.state != State.PLAYING:  # Busy wait!  (Ծ‸ Ծ)
+            sleep(0.1)
 
     def _dopause(self):
         self._player.pause()

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-import os,  sys
+import os
+import sys
 from enum import Enum
 
 
@@ -7,10 +8,12 @@ class AudioPlayerError(Exception):
     """Basic exception for errors raised by Player"""
     pass
 
+
 class PlayMode(Enum):
-    ONCE_ASYNC = 0
-    LOOP_ASYNC = 1
-    ONCE_BLOCKING = 2
+    ONCE_ASYNC = 0      # Play once in background
+    LOOP_ASYNC = 1      # Play in a loop in background
+    ONCE_BLOCKING = 2   # Play once. Halts script execution until playback finishes
+
 
 class State(Enum):
     STOPPED = 0     # Position at 00:00.0, ready to start playing
@@ -93,8 +96,9 @@ class AbstractAudioPlayer(ABC):
     def duration(self):
         """
         Gets the duration of the track, in seconds.
+        This property may not be available before play(). In this case will return 0.0
         """
-        return  self._get_duration()        
+        return self._get_duration() if self.loaded else 0.0
 
     @abstractmethod
     def _get_position(self):
@@ -146,7 +150,7 @@ class AbstractAudioPlayer(ABC):
     def volume(self, value):
         self._volume = max(min(value, 100), 0)  # clamp to [0..100]
         if self.loaded:
-            self._set_volume(self._volume)        
+            self._set_volume(self._volume)
 
     # endregion Properties
 
@@ -184,7 +188,7 @@ class AbstractAudioPlayer(ABC):
             self.load_player()
 
         self.volume = self._volume
-        if self._initial_position > 0: 
+        if self._initial_position > 0:
             self.position = self._initial_position
         self._state = State.PLAYING
         self._doplay(mode)
@@ -257,6 +261,7 @@ class AbstractAudioPlayer(ABC):
         Called by platfom code when playback is finished.
         """
         self._state = State.STOPPED
+        self._initial_position = 0
         if callable(self._finish_callback):
             self._finish_callback()
 

@@ -1,9 +1,11 @@
-import audioplayer
+from audioplayer import *
 from tkinter import *
 from tkinter import filedialog, messagebox
 import os
 from platform import system
 
+
+WTITLE = 'Music Player'
 
 class PlayerButton(Button):
     def __init__(self, master=None, imagefile='', **options):
@@ -30,13 +32,18 @@ class Player():
     def __init__(self):
         self.player = None
         self.buildUI()
-        self.timer_id = None
         self.autorepeat = False
+
+    def on_finish(self):
+        if self.autorepeat:
+            self.rewind()
 
     def load(self):
         fname = filedialog.askopenfilename()
         if fname:
-            self.player = audioplayer.AudioPlayer(fname)
+            if self.player:
+                self.player.close()
+            self.player = AudioPlayer(fname, self.on_finish)
             self.namelabel.config(
                 text=os.path.basename(self.player.fullfilename))
             try:
@@ -54,32 +61,27 @@ class Player():
         pos = self.player.position
         self.posvar.set(pos)
         self.poslabel.config(text=self.format_time(pos))
-        if pos >= self.player.duration:
-            if self.autorepeat:
-                self.rewind()
-            else:
-                self.player.stop()
-        else:
-            self.timer_id = self.root.after(100, self.timer)
+        self.root.title('{}  [{}]'.format(WTITLE, self.player.state))
+        if self.player.state == State.PLAYING:        
+            self.root.after(100, self.timer)
 
     def rewind(self):
         if self.player is not None:
             self.player.play()
             self.resetui()
-            if self.timer_id is not None:
-                self.root.after_cancel(self.timer_id)
-            self.timer_id = self.root.after(100, self.timer)
+            self.timer()
 
     def playpause(self):
         if self.player is None:
             self.load()
         else:
-            if self.player.state == audioplayer.State.STOPPED:
+            if self.player.state == State.STOPPED:
                 self.rewind()
-            elif self.player.state == audioplayer.State.PAUSED:
+            elif self.player.state == State.PAUSED:
                 self.player.resume()
             else:
                 self.player.pause()
+        self.timer()
 
     def stop(self):
         if self.player is not None:
@@ -94,7 +96,7 @@ class Player():
 
     def seek(self, pos):
         if self.player is not None:
-            if self.player.state == audioplayer.State.STOPPED:
+            if self.player.state == State.STOPPED:
                 self.rewind()
                 self.player.pause()
             if self.player.position != self.posscale.get():
@@ -118,7 +120,7 @@ class Player():
 
     def buildUI(self):
         self.root = Tk()
-        self.root.title('Music Player')
+        self.root.title(WTITLE)
         self.root.geometry("600x200")
         self.root.attributes('-topmost', True)
         self.root.resizable(False, False)

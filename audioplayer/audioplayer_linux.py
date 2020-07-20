@@ -1,7 +1,7 @@
 # Inspired by https://stackoverflow.com/a/29704692
 #            https://gstreamer.freedesktop.org/documentation/additional/design/State.html?gi-language=python
 
-from .abstractaudioplayer import AbstractAudioPlayer, AudioPlayerError, PlayMode
+from .abstractaudioplayer import *
 from urllib.request import pathname2url
 from threading import Thread
 
@@ -21,6 +21,7 @@ class AudioPlayerLinux(AbstractAudioPlayer):
         self._about_to_finish_signal = None
         self._message_signal = None
         self._saved_duration = 0.0
+        self._bus = None
         if AudioPlayerLinux._gloop_thread is None:
             # https://stackoverflow.com/a/7283584
             # "If you don't plan on using GTK with the program, you will have to run a gobject.Mainloop() in order to get messages from the bus."
@@ -41,8 +42,12 @@ class AudioPlayerLinux(AbstractAudioPlayer):
             Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT, position * Gst.SECOND)
 
     def _get_duration(self):
-        duration = self._player.query_duration(Gst.Format.TIME)[1] / Gst.SECOND
-        duration = max(duration, self._saved_duration)
+        ok, duration = self._player.query_duration(Gst.Format.TIME)
+        if not ok and self._bus is not None:
+            self._bus.timed_pop_filtered(0.5 * Gst.SECOND, Gst.MessageType.DURATION_CHANGED)
+            ok, duration = self._player.query_duration(Gst.Format.TIME)        
+
+        duration = max(duration / Gst.SECOND, self._saved_duration)
         self._saved_duration = duration
         return duration
 
@@ -65,20 +70,21 @@ class AudioPlayerLinux(AbstractAudioPlayer):
                 'uri', self._uri))                                            #
 
         self._saved_duration = 0.0
-        self._player.set_state(Gst.State.READY)   
+        self._player.set_state(Gst.State.READY)
         self._player.set_property('uri', self._uri)
-        self._player.set_state(Gst.State.PLAYING)         
+        self._player.set_state(Gst.State.PLAYING)
         self._bus = self._player.get_bus()
-                        
+
         if self._initial_position > 0:
-            self._bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE, Gst.MessageType.STREAM_START)
-            self._set_position(self._initial_position) 
+            self._bus.timed_pop_filtered(
+                Gst.CLOCK_TIME_NONE, Gst.MessageType.STREAM_START)
+            self._set_position(self._initial_position)
 
         status = self._player.get_state(Gst.CLOCK_TIME_NONE)
         if status[0] == Gst.StateChangeReturn.FAILURE:
             raise AudioPlayerError(
                 'Failed to play "{}"'.format(self.fullfilename))
-                
+
         if mode == PlayMode.ONCE_BLOCKING:
             # block until a matching message was posted on the bus
             self._bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE,
@@ -88,7 +94,8 @@ class AudioPlayerLinux(AbstractAudioPlayer):
             self._bus.add_signal_watch()
             if self._message_signal is not None:
                 self._bus.disconnect(self._message_signal)
-            self._message_signal = self._bus.connect("message", self._on_message)
+            self._message_signal = self._bus.connect(
+                "message", self._on_message)
 
     def _dopause(self):
         self._player.set_state(Gst.State.PAUSED)

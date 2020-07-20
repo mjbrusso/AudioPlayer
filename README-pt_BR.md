@@ -107,7 +107,7 @@ Veja [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) p
 - `audioplayer.AudioPlayer(filename, callback)`<br>
   Cria o player.
     - `filename` : *str* – Nome do arquivo, com extensão  (.mp3, .wav, ...)
-    -`callback` : *function()* – Função de callback que será chamada quando a reprodução terminar (apenas se no modo de execução PlayMode.ONCE_ASYNC)
+    -`callback` : *function()* – Função de callback que será chamada quando a reprodução terminar (Não é chamada no modo LOOP_ASYNC)
   
   Raise: `FileNotFoundError()` :  O arquivo não existe.
 
@@ -123,7 +123,8 @@ Veja [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) p
   Obtém o [estado](#estados) atual.
   
 - `duration` : *float* <br> 
-  Obtém o tempo de duração do trilha, em segundos.
+  Obtém o tempo de duração do trilha, em segundos.<br>
+  Esta propriedade pode não estar disponível antes de play(). Neste caso retornará 0.0.
 
 - `position` : *float* <br> 
   Obtém ou altera a posição atual da reprodução, em segundos.<br>
@@ -134,10 +135,16 @@ Veja [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/) p
 
 ### Métodos
 
-- `play(loop=False, block=False)`<br>
+- `play(mode=PlayMode.ONCE_ASYNC)`<br>
   Inicia a reprodução.
-    - `loop` (*bool*) – Repetir automaticamente a faixa quando concluída?
-    - `block` (*bool*) – Bloquear a thread durante a execução?
+    - `mode`:  (*PlayMode*) 
+
+    ```python3
+    class PlayMode(Enum):
+        ONCE_ASYNC = 0      # Executa uma vez em segundo plano
+        LOOP_ASYNC = 1      # Executa em loop em segundo plano
+        ONCE_BLOCKING = 2   # Executa uma vez. A execução do script é suspensa até a reprodução terminar
+    ```
 
   Raise: `AudioPlayerError()`: Falha ao executar.
 

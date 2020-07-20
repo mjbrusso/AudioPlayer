@@ -50,5 +50,5 @@ mp3 = os.path.join(os.path.dirname(__file__), 'audio', 'WarpDrive_01.mp3') # www
 p = AudioPlayer(mp3)
 p.volume = 20
 p.position = 3.5
-print('Playing "{}" from {:.2f} s, volume={}%'.format(mp3, p.position, p.volume))
+print('Playing "{}" from {:.1f}s, volume={}%, duration={:.1f}s'.format(mp3, p.position, p.volume, p.duration))
 p.play(PlayMode.ONCE_BLOCKING)

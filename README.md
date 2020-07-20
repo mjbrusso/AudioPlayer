@@ -108,7 +108,7 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
 - `audioplayer.AudioPlayer(filename, callback)`<br>
   Creates the player.
     - `filename` : *str* – The file name with extension  (.mp3, .wav, ...)
-    - `callback` : *function()* – Callback function to be called when playback ends (it's called only if the play mode is PlayMode.ONCE_ASYNC)
+    - `callback` : *function()* – Callback function to be called when playback ends (it is not called in LOOP_ASYNC mode)
   
   Raise: `FileNotFoundError()` :  The file does not exist.
 
@@ -124,7 +124,8 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
   Gets the current [state](#states).
 
 - `duration` : *float* <br> 
-  Gets the duration of the track, in seconds.
+  Gets the duration of the track, in seconds.<br>
+  This property may not be available before play(). In this case will return 0.0.
 
 - `position` : *float* <br> 
   Gets or sets the current playback position, in seconds.<br>
@@ -138,9 +139,17 @@ See the [playerGUI](https://github.com/mjbrusso/AudioPlayer/blob/master/example/
 
 - `play(mode=PlayMode.ONCE_ASYNC)`<br>
   Starts audio playback.
-    - `mode`:  (*PlayMode*) –  ONCE_ASYNC or LOOP_ASYNC or ONCE_BLOCKING 
+    - `mode`:  (*PlayMode*) 
+
+    ```python3
+    class PlayMode(Enum):
+        ONCE_ASYNC = 0      # Play once in background
+        LOOP_ASYNC = 1      # Play in a loop in background
+        ONCE_BLOCKING = 2   # Play once. Halts script execution until playback finishes
+    ```
 
   Raise: `AudioPlayerError()`: Failed to play.
+
 
 - `pause()`<br>
   Pauses audio playback.
