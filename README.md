@@ -1,4 +1,7 @@
 # AudioPlayer
+
+[![Downloads](https://static.pepy.tech/personalized-badge/audioplayer?period=total&units=international_system&left_color=black&right_color=orange&left_text=%20PyPI%20Download%20Stats)](https://pepy.tech/project/audioplayer)
+
 **audioplayer** is a cross platform Python 3 package for playing sounds (mp3, wav, ...). It provides the key features of an audio player, such as opening a media file, playing (loop/block), pausing, resuming, stopping, and setting the playback volume.
 
 I created this package to provide sound functionality to my game library [game2dboard](https://github.com/mjbrusso/game2dboard), but I decided to publish it separately.
